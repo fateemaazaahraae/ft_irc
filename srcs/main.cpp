@@ -1,20 +1,5 @@
-# include <iostream>
-# include <cstring>
-# include <string>
-# include <vector>
-# include <fcntl.h>
-# include <unistd.h>
-# include <cstdlib>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <poll.h>
-# include <exception>
-
-# define PORT 9090
-# define MAX_CLIENT 2000
-# define BUFFER_SIZE 2000
-
+#include "../includes/Server.hpp"
+#define BUFFER_SIZE 1000
 int main()
 {
     int serverSocket = -1, clientSocket = -1;
@@ -31,8 +16,7 @@ int main()
         int opt = 1;
         if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
             throw std::runtime_error("Setsockopt() failed");
-        
-        struct sockaddr_in serverAddr;
+            
         std::memset(&serverAddr, 0, sizeof(serverAddr));
         serverAddr.sin_family = AF_INET;
         serverAddr.sin_addr.s_addr = INADDR_ANY;

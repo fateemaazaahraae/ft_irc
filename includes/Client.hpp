@@ -1,5 +1,8 @@
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#pragma once
 
-
-#endif
+class CLient 
+{
+    private :
+        int fd;
+        struct sockaddr_in clientAddr;
+};
