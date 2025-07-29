@@ -34,6 +34,8 @@ void Server::createServerSocket()
     int option = 1;
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) < 0)
         throw std::runtime_error("Failed to set Socket option");
+    if (fcntl(this->fd, F_SETFL, O_NONBLOCK) < 0)
+        throw std::runtime_error("fcntl() failed");
     std::memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr.sin_family = AF_INET;
