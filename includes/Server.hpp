@@ -15,6 +15,14 @@
 # include <limits.h>
 #include "Client.hpp"
 
+#define RED "\e[1;31m"
+#define WHI "\e[0;37m"
+#define GRE "\e[1;32m"
+#define BROW "\e[1;33m"
+#define MAG "\e[1;35m"
+#define CYN "\e[1;36m"
+#define RESET "\e[0m"
+
 # define MAX_CLIENT 2000
 
 class Client;

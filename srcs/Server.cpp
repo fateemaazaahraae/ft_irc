@@ -69,18 +69,23 @@ void Server::acceptNewConnection()
 
 void Server::removeClient(int clientFd)
 {
-    for (std::vector<struct pollfd>::iterator it = poll_fd.begin(); it != poll_fd.end(); it++)
+    for (std::vector<struct pollfd>::iterator it = poll_fd.begin(); it != poll_fd.end(); )
     {
         if (it->fd == clientFd)
-            poll_fd.erase(it);
+            it = poll_fd.erase(it); //!erase(it) returns the next valid iterator so we assign it back to "it"
+        else
+            ++it; //!If it's not the one we're looking for we just do "++it"
     }
 
-    for (std::vector<Client>::iterator it = myClients.begin(); it != myClients.end(); it++)
+    for (std::vector<Client>::iterator it = myClients.begin(); it != myClients.end(); )
     {
         if (it->get_client_fd() == clientFd)
-            myClients.erase(it);
+            it = myClients.erase(it);
+        else
+            ++it;
     }
 }
+
 
 void Server::receiveNewData(int clientFd)
 {
@@ -90,7 +95,7 @@ void Server::receiveNewData(int clientFd)
     int readBytes = recv(clientFd, &buffer, sizeof(buffer) - 1, 0);
     if (readBytes <= 0)
     {
-        std::cout << "Client Disconnected (fd = " << clientFd << ")" << std::endl;
+        std::cout << RED << "Client Disconnected (fd = " << clientFd << ")" << RESET << std::endl;
         close(clientFd);
         removeClient(clientFd);
     }
