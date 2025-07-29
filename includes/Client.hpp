@@ -13,7 +13,6 @@ class Client
         std::string username;
         struct sockaddr_in clientAddr;
     public :
-        // char buffer[1000];
         Client();
         ~Client();
     //======================== geters =======================

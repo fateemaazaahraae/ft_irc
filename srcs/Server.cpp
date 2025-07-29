@@ -85,7 +85,7 @@ void Server::receiveNewData(int clientFd)
     char buffer[1024];
     
     std::memset(&buffer, 0, sizeof(buffer));
-    int readBytes = recv(clientFd, &buffer, INT_MAX - 1, 0);
+    int readBytes = recv(clientFd, &buffer, sizeof(buffer) - 1, 0);
     if (readBytes <= 0)
     {
         std::cout << "Client Disconnected (fd = " << clientFd << ")" << std::endl;
@@ -95,16 +95,17 @@ void Server::receiveNewData(int clientFd)
     else
     {
         buffer[readBytes] = '\0';
-        std::cout << "--> " << buffer << std::endl;
-        // buffer \r\n -> execute_command
-        // for (size_t i = 0; i < myClients.size(); i++)
-        // {
-        //     if (myClients[i].get_client_fd() == clientFd)
-        //     {
-        //         myClients[i].set_client_buffer(buffer);
-        //         std::cout << "--> " << myClients[i].get_client_buffer() << std::endl;
-        //     }
-        // }
+        for (size_t i = 0; i < myClients.size(); i++)
+        {
+            if (myClients[i].get_client_fd() == clientFd)
+            {
+                myClients[i].set_client_buffer(myClients[i].get_client_buffer() + buffer);
+                // executeClientCommand(myClients[i]);
+                std::cout << "--> " << myClients[i].get_client_buffer() << std::endl;
+                myClients[i].set_client_buffer("");
+                break;
+            }
+        }
     }
 }
 
@@ -119,15 +120,16 @@ void Server::serverLoop()
         {
             if (poll_fd[i].revents & POLLIN)
             {
-                if (poll_fd[i].fd == this->fd) //TODO new connectionnnn
+                if (poll_fd[i].fd == this->fd)
                     acceptNewConnection();
                 else
-                {
                     receiveNewData(poll_fd[i].fd);
-                }
             }
         }
     }
 }
 
 Server::~Server(){}
+
+//TODO ---->   1. handle signal
+//TODO ---->   2. \r\n
