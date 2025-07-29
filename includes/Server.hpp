@@ -12,8 +12,12 @@
 # include <arpa/inet.h>
 # include <poll.h>
 # include <exception>
+# include <limits.h>
+#include "Client.hpp"
 
 # define MAX_CLIENT 2000
+
+class Client;
 
 class Server
 {
@@ -22,6 +26,15 @@ class Server
         int port;
         std::string pass;
         std::vector<struct pollfd> poll_fd;
+        std::vector<Client> myClients;
         struct sockaddr_in serverAddr;
-        
+    public :
+        Server();
+        ~Server();
+        void initServer(std::string port, std::string pass);
+        void createServerSocket();
+        void serverLoop();
+        void acceptNewConnection();
+        void receiveNewData(int clientFd);
+        void removeClient(int clientFd);
 };
