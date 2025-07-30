@@ -93,7 +93,7 @@ void Server::receiveNewData(int clientFd)
     char buffer[1024];
     
     std::memset(&buffer, 0, sizeof(buffer));
-    int readBytes = recv(clientFd, &buffer, sizeof(buffer) - 1, 0);
+    int readBytes = recv(clientFd, buffer, sizeof(buffer), 0);
     if (readBytes <= 0)
     {
         std::cout << RED << "Client Disconnected (fd = " << clientFd << ")" << RESET << std::endl;
@@ -110,6 +110,7 @@ void Server::receiveNewData(int clientFd)
                 std::string &buf = myClients[i].get_client_buffer();
                 buf += buffer;
                 size_t pos;
+                // std::cout << "buffer ---> " << buf;
                 while ((pos = buf.find("\r\n")) != std::string::npos)
                 {
                     std::string cmd = buf.substr(0, pos);
@@ -117,6 +118,7 @@ void Server::receiveNewData(int clientFd)
                     std::cout << "--> Received complete command: " << cmd << std::endl;
                     
                     //TODO executeClientCommand(myClients[i], cmd);
+                    
                 }
                 break;
             }
