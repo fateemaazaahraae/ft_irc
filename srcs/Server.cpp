@@ -65,6 +65,7 @@ void Server::acceptNewConnection()
     clientPoll.events = POLLIN;
     clientPoll.revents = 0;
     poll_fd.push_back(clientPoll);
+    std::cout << GRE << "New Client connected (fd = " << new_client.get_client_fd() << ")" << RESET << std::endl;
 }
 
 void Server::removeClient(int clientFd)
@@ -102,14 +103,21 @@ void Server::receiveNewData(int clientFd)
     else
     {
         buffer[readBytes] = '\0';
-        for (size_t i = 0; i < myClients.size(); i++)
+         for (size_t i = 0; i < myClients.size(); ++i)
         {
             if (myClients[i].get_client_fd() == clientFd)
             {
-                myClients[i].set_client_buffer(myClients[i].get_client_buffer() + buffer);
-                // executeClientCommand(myClients[i]);
-                std::cout << "--> " << myClients[i].get_client_buffer() << std::endl;
-                myClients[i].set_client_buffer("");
+                std::string &buf = myClients[i].get_client_buffer();
+                buf += buffer;
+                size_t pos;
+                while ((pos = buf.find("\r\n")) != std::string::npos)
+                {
+                    std::string cmd = buf.substr(0, pos);
+                    buf.erase(0, pos + 2);
+                    std::cout << "--> Received complete command: " << cmd << std::endl;
+                    
+                    //TODO executeClientCommand(myClients[i], cmd);
+                }
                 break;
             }
         }
@@ -139,4 +147,4 @@ void Server::serverLoop()
 Server::~Server(){}
 
 //TODO ---->   1. handle signal
-//TODO ---->   2. \r\n
+//TODO ---->   2. \r\n  ---> i did it

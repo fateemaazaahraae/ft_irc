@@ -17,7 +17,7 @@ class Client
         ~Client();
     //======================== geters =======================
         int get_client_fd() const;
-        std::string get_client_buffer() const;
+        std::string &get_client_buffer();
         struct sockaddr_in &get_client_addr();
 
     //======================= seters =======================

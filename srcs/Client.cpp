@@ -10,7 +10,7 @@ Client::Client()
 
 int Client::get_client_fd() const { return fd; }
 
-std::string Client::get_client_buffer() const { return buffer; }
+std::string &Client::get_client_buffer() { return buffer; }
 
 struct sockaddr_in& Client::get_client_addr() 
 {
