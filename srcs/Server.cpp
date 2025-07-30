@@ -1,5 +1,7 @@
 #include "../includes/Server.hpp"
 
+extern int g_is_running; 
+
 Server::Server()
 {
     fd = -1;
@@ -126,11 +128,15 @@ void Server::receiveNewData(int clientFd)
 
 void Server::serverLoop()
 {
-    while (true) //! to add signalHandler
+    while (g_is_running) //! to add signalHandler
     {
         int poll_count = poll(this->poll_fd.data(), this->poll_fd.size(), -1);
         if (poll_count < 0)
+        {
+            if (!g_is_running)
+                break;
             throw std::runtime_error("poll() failed");
+        }
         for (size_t i = 0; i < this->poll_fd.size(); i++)
         {
             if (poll_fd[i].revents & POLLIN)
