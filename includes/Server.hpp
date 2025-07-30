@@ -13,6 +13,7 @@
 # include <poll.h>
 # include <exception>
 # include <limits.h>
+#include <signal.h>
 #include "Client.hpp"
 
 #define RED "\e[1;31m"
@@ -24,6 +25,8 @@
 #define RESET "\e[0m"
 
 # define MAX_CLIENT 2000
+
+
 
 class Client;
 

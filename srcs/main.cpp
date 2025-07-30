@@ -1,6 +1,16 @@
 #include "../includes/Server.hpp"
 
-#define BUFFER_SIZE 1000
+int g_is_running = 1;
+
+
+void handle_signal(int sig)
+{
+    if (sig == SIGINT || sig == SIGQUIT)
+    {
+        std::cout<<"\nReceived signal => Shutting down server (-_-)zzzz\n";
+        g_is_running = 0;
+    }
+}
 
 int main(int ac, char **av)
 {
@@ -10,6 +20,9 @@ int main(int ac, char **av)
     {
         if (ac != 3)
             throw std::runtime_error("Usage: ./ircserv <port> <password>");
+
+        signal(SIGINT, handle_signal);
+        signal(SIGQUIT, handle_signal);
 
         my_serv.initServer(av[1], av[2]);
         my_serv.createServerSocket();
