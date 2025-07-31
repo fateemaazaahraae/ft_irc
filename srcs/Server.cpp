@@ -153,30 +153,10 @@ void Server::serverLoop()
 
 void Server::executeClientCommand(Client& client, const std::string& cmd)
 {
-    std::string my_command = "";
-    std::string arg = "";
+    std::vector<std::string> arg;
 
-    size_t space_pos = cmd.find(' ');//!khasna nsawlo wax khas nhadliw too many spaces and \t 
-    if (space_pos != std::string::npos) 
-    {
-        my_command = cmd.substr(0, space_pos);
-        arg = cmd.substr(space_pos + 1);
-    } 
-    else 
-        my_command = cmd;
-    
-    if (my_command == "PASS")
-       client.handle_pass(arg);
-    else if (my_command == "NICK")
-        client.handle_nick(arg);
-    else if (my_command == "USER")
-        client.handle_user(arg);
-    else if (my_command == "JOIN")
-        client.handle_join(arg);
-    else if (my_command == "PRIVMSG")
-        client.handle_private_msg(arg);
-    else
-        send(client.get_client_fd(), "Unknown command", 15, 0);
+    arg = get_arg(cmd);
+    client.executeCommand(arg);
 
     std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
     (void)client;

@@ -26,10 +26,11 @@ class Client
         void set_client_buffer(std::string buffer);
         void set_client_addr(struct sockaddr_in addr);
 
-        void handle_pass(std::string& arg);
-        void handle_nick(std::string& arg);
-        void handle_user(std::string& arg);
-        void handle_join(std::string& arg);
-        void handle_private_msg(std::string& arg);
+        void handle_pass(std::vector<std::string> &args);
+        void handle_nick(std::vector<std::string> &args);
+        void handle_user(std::vector<std::string> &args);
+        void handle_join(std::vector<std::string> &args);
+        void handle_private_msg(std::vector<std::string> &args);
+        void executeCommand(std::vector<std::string> &args);
 
 };
