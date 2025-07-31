@@ -9,7 +9,7 @@ void Server::handle_pass(Client& client, std::vector<std::string> &args)
     }
     if (args.size() != 2)
     {
-        send(client.get_client_fd(), "PASS: Not enough parameters\n", 28, 0);
+        send(client.get_client_fd(), "Not enough parameters\n", 22, 0);
         return ;
     }
     if (pass == args[1])
