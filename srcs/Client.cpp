@@ -52,4 +52,14 @@ void    Client::executeCommand(std::vector<std::string> &args)
 
 }
 
+void Client::handle_pass(std::vector<std::string> &args)
+{}
+
+void Client::handle_nick(std::vector<std::string> &args)
+{}
+
+void Client::handle_user(std::vector<std::string> &args)
+{}
+
+
 Client::~Client() {}

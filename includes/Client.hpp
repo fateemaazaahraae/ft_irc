@@ -16,6 +16,7 @@ class Client
     public :
         Client();
         ~Client();
+
     //======================== getters =======================
         int get_client_fd() const;
         std::string &get_client_buffer();
@@ -26,7 +27,7 @@ class Client
         void set_client_buffer(std::string buffer);
         void set_client_addr(struct sockaddr_in addr);
 
-        void handle_pass(std::vector<std::string> &args);
+    //======================= client methods =================
         void handle_nick(std::vector<std::string> &args);
         void handle_user(std::vector<std::string> &args);
         void handle_join(std::vector<std::string> &args);
