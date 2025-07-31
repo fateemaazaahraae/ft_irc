@@ -170,8 +170,10 @@ void Server::executeClientCommand(Client& client, const std::string& cmd)
         // handle_nick
     // else if (my_command == "USER")
         // handle_user
+    // else if (my_command == "JOIN")
+        // handel_join
     // else
-        //any other case
+        //handel_private_msg
 
     // std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
     // (void)client;
