@@ -166,15 +166,15 @@ void Server::executeClientCommand(Client& client, const std::string& cmd)
         my_command = cmd;
     
     if (my_command == "PASS")
-       handle_pass(client, arg);
+       client.handle_pass(arg);
     else if (my_command == "NICK")
-        handle_nick(client, arg);
+        client.handle_nick(arg);
     else if (my_command == "USER")
-        handle_user(client, arg);
+        client.handle_user(arg);
     else if (my_command == "JOIN")
-        handel_join(client, arg);
+        client.handle_join(arg);
     else if (my_command == "PRIVMSG")
-        handle_private_msg(client, arg);
+        client.handle_private_msg(arg);
     else
         send(client.get_client_fd(), "Unknown command", 15, 0);
 
