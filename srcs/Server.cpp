@@ -9,16 +9,6 @@ Server::Server()
     pass = "";
 }
 
-int   check_port(std::string port)
-{
-    if (port.find_first_not_of("0123456789") != std::string::npos)
-        throw std::runtime_error("Port contain non numeric characters");
-    int res = atoi(port.c_str());
-    if (res < 1024 || res > 65535)
-        throw std::runtime_error("Invalid port range");
-    return res;
-}
-
 void Server::initServer(std::string port, std::string pass)
 {
     this->port = check_port(port);
@@ -75,9 +65,9 @@ void Server::removeClient(int clientFd)
     for (std::vector<struct pollfd>::iterator it = poll_fd.begin(); it != poll_fd.end(); )
     {
         if (it->fd == clientFd)
-            it = poll_fd.erase(it); //!erase(it) returns the next valid iterator so we assign it back to "it"
+            it = poll_fd.erase(it);
         else
-            ++it; //!If it's not the one we're looking for we just do "++it"
+            ++it;
     }
 
     for (std::vector<Client>::iterator it = myClients.begin(); it != myClients.end(); )
@@ -88,7 +78,6 @@ void Server::removeClient(int clientFd)
             ++it;
     }
 }
-
 
 void Server::receiveNewData(int clientFd)
 {
@@ -112,13 +101,10 @@ void Server::receiveNewData(int clientFd)
                 std::string &buf = myClients[i].get_client_buffer();
                 buf += buffer;
                 size_t pos;
-                // std::cout << "buffer ---> " << buf;
                 while ((pos = buf.find("\n")) != std::string::npos)
                 {
                     std::string cmd = buf.substr(0, pos);
                     buf.erase(0, pos + 1);
-                    // std::cout << "--> Received complete command: " << cmd << std::endl;
-
                     executeClientCommand(myClients[i], cmd);
                 }
                 break;
@@ -151,16 +137,18 @@ void Server::serverLoop()
     }
 }
 
-std::vector<std::string> get_arg(std::string cmd)
+std::vector<std::string> Server::get_arg(std::string cmd)
 {
     std::vector<std::string> args;
     int i = 0;
+
+    cmd = trim(cmd);
     while (cmd[i])
     {
         while (cmd[i] == ' ' || cmd[i] == '\t' )
             i++;
-        int j= i;
-        while (cmd[i] && !(cmd[i] == ' ' || cmd[i] == '\t' ))
+        int j = i;
+        while (cmd[j] && !(cmd[j] == ' ' || cmd[j] == '\t' ))
             j++;
         args.push_back(cmd.substr(i, j));
         i = j++;
@@ -174,16 +162,28 @@ void Server::executeClientCommand(Client& client, const std::string& cmd)
     if (cmd.empty())
         return ;
     arg = get_arg(cmd);
-    std::cout << "helllllo\n";
-    // client.executeCommand(arg);
-    size_t i = 0;
-    while (i < arg.size())
-    {
-        std::cout << i + 1 << "--- " << arg[i] << std::endl;
-        i++;
-    }
-    (void)client;
+    executeCommand(client, arg);
 }
+
+void Server::executeCommand(Client &client, std::vector<std::string> &args)
+{
+    if (args.empty())
+        return;
+    args[0] = convertStringToUpperCase(args[0]);
+    if (args[0] == "PASS")
+        handle_pass(client, args);
+    else if (args[0] == "NICK")
+        handle_nick(client, args);
+    // else if (args[0] == "USER")
+    //     client.handle_user(args);
+    // else if (args[0] == "JOIN")
+    //     client.handle_join(args);
+    // else if (args[0] == "PRIVMSG")
+    //     client.handle_private_msg(args);
+    else
+        send(client.get_client_fd(), "Unknown command\n", 16, 0);
+}
+
 
 Server::~Server(){}
 
