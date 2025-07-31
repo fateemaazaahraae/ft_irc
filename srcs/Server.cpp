@@ -112,13 +112,13 @@ void Server::receiveNewData(int clientFd)
                 std::string &buf = myClients[i].get_client_buffer();
                 buf += buffer;
                 size_t pos;
-                while ((pos = buf.find("\r\n")) != std::string::npos)
+                while ((pos = buf.find("\n")) != std::string::npos)
                 {
                     std::string cmd = buf.substr(0, pos);
                     buf.erase(0, pos + 2);
                     std::cout << "--> Received complete command: " << cmd << std::endl;
                     
-                    //TODO executeClientCommand(myClients[i], cmd);
+                    executeClientCommand(myClients[i], cmd);
                 }
                 break;
             }
@@ -128,7 +128,7 @@ void Server::receiveNewData(int clientFd)
 
 void Server::serverLoop()
 {
-    while (g_is_running) //! to add signalHandler
+    while (g_is_running)
     {
         int poll_count = poll(this->poll_fd.data(), this->poll_fd.size(), -1);
         if (poll_count < 0)
@@ -150,7 +150,34 @@ void Server::serverLoop()
     }
 }
 
+void Server::executeClientCommand(Client& client, const std::string& cmd)
+{
+    std::string my_command = "";
+    std::string arg = "";
+
+    size_t space_pos = cmd.find(' ');//!khasna nsawlo wax khas nhadliw too many spaces and \t 
+    if (space_pos != std::string::npos) 
+    {
+        my_command = cmd.substr(0, space_pos);
+        arg = cmd.substr(space_pos + 1);
+    } 
+    else 
+        my_command = cmd;
+    
+    // if (my_command == "PASS")
+       // handle_pass
+    // else if (my_command == "NICK")
+        // handle_nick
+    // else if (my_command == "USER")
+        // handle_user
+    // else
+        //any other case
+
+    // std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
+    // (void)client;
+}
+
 Server::~Server(){}
 
-//TODO ---->   1. handle signal
+//TODO ---->   1. handle signal ---> i did it
 //TODO ---->   2. \r\n  ---> i did it
