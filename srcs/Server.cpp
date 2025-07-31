@@ -113,10 +113,10 @@ void Server::receiveNewData(int clientFd)
                 buf += buffer;
                 size_t pos;
                 // std::cout << "buffer ---> " << buf;
-                while ((pos = buf.find("\r\n")) != std::string::npos)
+                while ((pos = buf.find("\n")) != std::string::npos)
                 {
                     std::string cmd = buf.substr(0, pos);
-                    buf.erase(0, pos + 2);
+                    buf.erase(0, pos + 1);
                     // std::cout << "--> Received complete command: " << cmd << std::endl;
 
                     executeClientCommand(myClients[i], cmd);
@@ -151,14 +151,37 @@ void Server::serverLoop()
     }
 }
 
+std::vector<std::string> get_arg(std::string cmd)
+{
+    std::vector<std::string> args;
+    int i = 0;
+    while (cmd[i])
+    {
+        while (cmd[i] == ' ' || cmd[i] == '\t' )
+            i++;
+        int j= i;
+        while (cmd[i] && !(cmd[i] == ' ' || cmd[i] == '\t' ))
+            j++;
+        args.push_back(cmd.substr(i, j));
+        i = j++;
+    }
+    return args;
+}
+
 void Server::executeClientCommand(Client& client, const std::string& cmd)
 {
     std::vector<std::string> arg;
-
+    if (cmd.empty())
+        return ;
     arg = get_arg(cmd);
-    client.executeCommand(arg);
-
-    std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
+    std::cout << "helllllo\n";
+    // client.executeCommand(arg);
+    size_t i = 0;
+    while (i < arg.size())
+    {
+        std::cout << i + 1 << "--- " << arg[i] << std::endl;
+        i++;
+    }
     (void)client;
 }
 

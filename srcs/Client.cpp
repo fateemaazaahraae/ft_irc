@@ -35,21 +35,21 @@ void Client::set_client_addr(struct sockaddr_in addr)
     this->clientAddr.sin_family = addr.sin_family;
 }
 
-void    Client::executeCommand(std::vector<std::string> &args)
-{
-    if (args[0] == "PASS")
-       this->handle_pass(args);
-    else if (args[0] == "NICK")
-        this->handle_nick(args);
-    else if (args[0] == "USER")
-        this->handle_user(args);
-    else if (args[0] == "JOIN")
-        this->handle_join(args);
-    else if (args[0] == "PRIVMSG")
-        this->handle_private_msg(args);
-    else
-        send(this->get_client_fd(), "Unknown command", 15, 0);
+// void    Client::executeCommand(std::vector<std::string> &args)
+// {
+//     if (args[0] == "PASS")
+//        this->handle_pass(args);
+//     else if (args[0] == "NICK")
+//         this->handle_nick(args);
+//     else if (args[0] == "USER")
+//         this->handle_user(args);
+//     else if (args[0] == "JOIN")
+//         this->handle_join(args);
+//     else if (args[0] == "PRIVMSG")
+//         this->handle_private_msg(args);
+//     else
+//         send(this->get_client_fd(), "Unknown command", 15, 0);
 
-}
+// }
 
 Client::~Client() {}
