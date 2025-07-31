@@ -12,15 +12,16 @@ class Client
         std::string nickname;
         std::string username;
         struct sockaddr_in clientAddr;
+        bool    is_authorized;
     public :
         Client();
         ~Client();
-    //======================== geters =======================
+    //======================== getters =======================
         int get_client_fd() const;
         std::string &get_client_buffer();
         struct sockaddr_in &get_client_addr();
 
-    //======================= seters =======================
+    //======================= setters =======================
         void set_client_fd(int fd);
         void set_client_buffer(std::string buffer);
         void set_client_addr(struct sockaddr_in addr);

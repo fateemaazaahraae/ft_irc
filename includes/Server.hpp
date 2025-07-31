@@ -48,4 +48,6 @@ class Server
         void acceptNewConnection();
         void receiveNewData(int clientFd);
         void removeClient(int clientFd);
+        void executeClientCommand(Client& client, const std::string& cmd);
+
 };

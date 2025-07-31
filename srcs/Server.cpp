@@ -117,10 +117,9 @@ void Server::receiveNewData(int clientFd)
                 {
                     std::string cmd = buf.substr(0, pos);
                     buf.erase(0, pos + 2);
-                    std::cout << "--> Received complete command: " << cmd << std::endl;
-                    
-                    //TODO executeClientCommand(myClients[i], cmd);
-                    
+                    // std::cout << "--> Received complete command: " << cmd << std::endl;
+
+                    executeClientCommand(myClients[i], cmd);
                 }
                 break;
             }
@@ -130,7 +129,7 @@ void Server::receiveNewData(int clientFd)
 
 void Server::serverLoop()
 {
-    while (g_is_running) //! to add signalHandler
+    while (g_is_running)
     {
         int poll_count = poll(this->poll_fd.data(), this->poll_fd.size(), -1);
         if (poll_count < 0)
@@ -152,7 +151,39 @@ void Server::serverLoop()
     }
 }
 
+void Server::executeClientCommand(Client& client, const std::string& cmd)
+{
+    std::string my_command = "";
+    std::string arg = "";
+
+    size_t space_pos = cmd.find(' ');//!khasna nsawlo wax khas nhadliw too many spaces and \t 
+    if (space_pos != std::string::npos) 
+    {
+        my_command = cmd.substr(0, space_pos);
+        arg = cmd.substr(space_pos + 1);
+    } 
+    else 
+        my_command = cmd;
+    
+    if (my_command == "PASS")
+       handle_pass(client, arg);
+    else if (my_command == "NICK")
+        handle_nick(client, arg);
+    else if (my_command == "USER")
+        handle_user(client, arg);
+    else if (my_command == "JOIN")
+        handel_join(client, arg);
+    else if (my_command == "PRIVMSG")
+        handle_private_msg(client, arg);
+    else
+        send(client.get_client_fd(), "Unknown command", 15, 0);
+
+    std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
+    (void)client;
+}
+
 Server::~Server(){}
 
-//TODO ---->   1. handle signal
-//TODO ---->   2. \r\n  ---> i did it
+//TODO   ## client command ##
+//TODO ---->   (ouiam) 1. JOIN & PRIVMSG
+//TODO ---->   (tiima) 2. PASS & NICK & USER

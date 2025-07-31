@@ -6,6 +6,7 @@ Client::Client()
     buffer = "";
     nickname = "";
     username = "";
+    is_authorized = false;
 }
 
 int Client::get_client_fd() const { return fd; }
