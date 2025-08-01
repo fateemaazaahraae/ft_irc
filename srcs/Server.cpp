@@ -75,9 +75,9 @@ void Server::removeClient(int clientFd)
     for (std::vector<struct pollfd>::iterator it = poll_fd.begin(); it != poll_fd.end(); )
     {
         if (it->fd == clientFd)
-            it = poll_fd.erase(it); //!erase(it) returns the next valid iterator so we assign it back to "it"
+            it = poll_fd.erase(it);
         else
-            ++it; //!If it's not the one we're looking for we just do "++it"
+            ++it;
     }
 
     for (std::vector<Client>::iterator it = myClients.begin(); it != myClients.end(); )
@@ -116,7 +116,7 @@ void Server::receiveNewData(int clientFd)
                 {
                     std::string cmd = buf.substr(0, pos);
                     buf.erase(0, pos + 2);
-                    std::cout << "--> Received complete command: " << cmd << std::endl;
+                    // std::cout << "--> Received complete command: " << cmd << std::endl;
                     
                     executeClientCommand(myClients[i], cmd);
                 }
@@ -175,8 +175,8 @@ void Server::executeClientCommand(Client& client, const std::string& cmd)
     // else
         //handel_private_msg
 
-    // std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
-    // (void)client;
+    std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
+    (void)client;
 }
 
 Server::~Server(){}
