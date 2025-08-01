@@ -6,7 +6,11 @@ Client::Client()
     buffer = "";
     nickname = "";
     username = "";
+    realname = "";
+    is_authorized = false;
 }
+
+//======================== getters =======================
 
 int Client::get_client_fd() const { return fd; }
 
@@ -15,6 +19,27 @@ std::string &Client::get_client_buffer() { return buffer; }
 struct sockaddr_in& Client::get_client_addr() 
 {
     return clientAddr;
+}
+
+int Client::get_client_authe() { return is_authorized; }
+
+std::string& Client::get_client_nickname() { return nickname; }
+
+std::string& Client::get_client_username() { return username; }
+
+std::string& Client::get_client_realname() { return realname; }
+
+
+//======================= setters =======================
+
+void Client::set_client_realname(std::string& realname)
+{
+    this->realname = realname;
+}
+
+void Client::set_client_username(std::string& username)
+{
+    this->username = username;
 }
 
 void Client::set_client_fd(int fd)
@@ -33,6 +58,17 @@ void Client::set_client_addr(struct sockaddr_in addr)
     this->clientAddr.sin_port = addr.sin_port;
     this->clientAddr.sin_family = addr.sin_family;
 }
+
+void Client::set_client_authe()
+{
+    is_authorized = !is_authorized;
+}
+
+void Client::set_client_nickname(std::string& nickname)
+{
+    this->nickname = nickname;
+}
+
 
 
 Client::~Client() {}

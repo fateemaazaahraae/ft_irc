@@ -9,16 +9,6 @@ Server::Server()
     pass = "";
 }
 
-int   check_port(std::string port)
-{
-    if (port.find_first_not_of("0123456789") != std::string::npos)
-        throw std::runtime_error("Port contain non numeric characters");
-    int res = atoi(port.c_str());
-    if (res < 1024 || res > 65535)
-        throw std::runtime_error("Invalid port range");
-    return res;
-}
-
 void Server::initServer(std::string port, std::string pass)
 {
     this->port = check_port(port);
@@ -89,13 +79,12 @@ void Server::removeClient(int clientFd)
     }
 }
 
-
 void Server::receiveNewData(int clientFd)
 {
     char buffer[1024];
     
     std::memset(&buffer, 0, sizeof(buffer));
-    int readBytes = recv(clientFd, &buffer, sizeof(buffer) - 1, 0);
+    int readBytes = recv(clientFd, buffer, sizeof(buffer), 0);
     if (readBytes <= 0)
     {
         std::cout << RED << "Client Disconnected (fd = " << clientFd << ")" << RESET << std::endl;
@@ -115,9 +104,7 @@ void Server::receiveNewData(int clientFd)
                 while ((pos = buf.find("\n")) != std::string::npos)
                 {
                     std::string cmd = buf.substr(0, pos);
-                    buf.erase(0, pos + 2);
-                    // std::cout << "--> Received complete command: " << cmd << std::endl;
-                    
+                    buf.erase(0, pos + 1);
                     executeClientCommand(myClients[i], cmd);
                 }
                 break;
@@ -150,36 +137,78 @@ void Server::serverLoop()
     }
 }
 
+std::vector<std::string> Server::get_arg(std::string cmd)
+{
+    std::vector<std::string> args;
+    size_t i = 0;
+
+    cmd = trim(cmd);
+
+    while (i < cmd.size())
+    {
+        while (i < cmd.size() && (cmd[i] == ' ' || cmd[i] == '\t'))
+            i++;
+
+        if (i >= cmd.size())
+            break;
+        if (cmd[i] == ':')
+        {
+            // while (i < cmd.size() && cmd[i] == ':')
+            //     i++;
+            // while (i < cmd.size() && (cmd[i] == ' ' || cmd[i] == '\t'))
+            //     i++;
+            if (i < cmd.size())
+                args.push_back(cmd.substr(i));
+            break;
+        }
+
+        size_t j = i;
+        while (j < cmd.size() && cmd[j] != ' ' && cmd[j] != '\t' && cmd[j] != ':')
+            j++;
+        if (i != j)
+            args.push_back(cmd.substr(i, j - i));
+        i = j;
+    }
+
+    return args;
+}
+
+
 void Server::executeClientCommand(Client& client, const std::string& cmd)
 {
-    std::string my_command = "";
-    std::string arg = "";
-
-    size_t space_pos = cmd.find(' ');//!khasna nsawlo wax khas nhadliw too many spaces and \t 
-    if (space_pos != std::string::npos) 
-    {
-        my_command = cmd.substr(0, space_pos);
-        arg = cmd.substr(space_pos + 1);
-    } 
-    else 
-        my_command = cmd;
-    
-    // if (my_command == "PASS")
-       // handle_pass
-    // else if (my_command == "NICK")
-        // handle_nick
-    // else if (my_command == "USER")
-        // handle_user
-    // else if (my_command == "JOIN")
-        // handel_join
-    // else
-        //handel_private_msg
-
-    std::cout << ">>> cmd = "<< cmd << " and my_command = " << my_command << " and arg = " << arg << "\n";
-    (void)client;
+    std::vector<std::string> arg;
+    if (cmd.empty())
+        return ;
+    arg = get_arg(cmd);
+    if (arg.empty())
+        return ;
+    for (size_t i = 0; i < arg.size(); i++)
+        std::cout << "arg[" << i << "] = " << arg[i] << std::endl;
+    executeCommand(client, arg);
 }
+
+void Server::executeCommand(Client &client, std::vector<std::string> &args)
+{
+    if (args.empty())
+        return;
+    args[0] = convertCmdToUpperCase(args[0]);
+    if (args[0] == "PASS")
+        handle_pass(client, args);
+    else if (args[0] == "NICK")
+        handle_nick(client, args);
+    else if (args[0] == "USER")
+        handle_user(client, args);
+    // else if (args[0] == "JOIN")
+    //     client.handle_join(args);
+    // else if (args[0] == "PRIVMSG")
+    //     client.handle_private_msg(args);
+    else
+        send(client.get_client_fd(), "Unknown command\n", 16, 0);
+}
+
 
 Server::~Server(){}
 
-//TODO ---->   1. handle signal ---> i did it
-//TODO ---->   2. \r\n  ---> i did it
+//TODO   ## client command ##
+//TODO ---->   (ouiam) 1. JOIN & PRIVMSG
+//TODO ---->   (tiima) 2. PASS & NICK & USER
