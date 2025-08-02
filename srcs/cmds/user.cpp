@@ -2,7 +2,7 @@
 
 bool Server::isValidUsername(std::string& username)
 {
-    if (username.empty() || username.length() > 12)
+    if (username.empty())
         return false;
     for (size_t i = 0; i < username.length(); ++i)
     {
