@@ -23,7 +23,7 @@ void Server::handle_user(Client& client, std::vector<std::string> &args)
     {
         replyCode = 461;
         std::string rep = reply(client.get_client_nickname(), "USER :Not enough parameters");
-        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+        send_to_client(client.get_client_fd(), rep);
         return ;
     }
     client.set_client_username(args[1]);
@@ -31,7 +31,7 @@ void Server::handle_user(Client& client, std::vector<std::string> &args)
     {
         replyCode = 432;
         std::string rep = reply(client.get_client_nickname(), args[1] + " :Erroneous username");
-        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+        send_to_client(client.get_client_fd(), rep);
         return ;
     }
     if (args[4][0] == ':')
@@ -42,7 +42,7 @@ void Server::handle_user(Client& client, std::vector<std::string> &args)
 
     if (client.get_client_realname().empty())
     {
-        send(client.get_client_fd(), "Realname is required\n", 21, 0);
+        send_to_client(client.get_client_fd(), "Realname is required\n");
         return ;
     }
     //* welcome message

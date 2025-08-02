@@ -3,10 +3,7 @@
 void Server::send_to_client(int clientFd, const std::string& message) 
 {
     if (send(clientFd, message.c_str(), message.length(), 0) == -1)
-    {
-        std::cout << "send faild\n";
-        return;
-    }
+        std::cout << "Send failed\n";
 }
 
 Channel* Server::findChannel(const std::string& name) 
@@ -25,19 +22,19 @@ void Server::handle_join(Client& client, std::vector<std::string>& args)
 {
     if (!client.get_client_authe())
     {
-        send_to_client(client.get_client_fd(),  "You are not registed :(\n");
-        return;
+        send_to_client(client.get_client_fd(),  "You are not registered :(\n");
+        return ;
     }
     if (args.size() != 2)
     {
         send_to_client(client.get_client_fd(),  "bad join argument -_-\n");
-        return;
+        return ;
     }
     std::string name = args[1];
     if (name.empty() || name[0] != '#')
     {
         send_to_client(client.get_client_fd(),  name + " : is invalid channel name\n");
-        return;
+        return ;
     }
     Channel* chan = findChannel(name);
     if (chan == NULL) 
@@ -49,5 +46,5 @@ void Server::handle_join(Client& client, std::vector<std::string>& args)
     } 
     else 
         chan->add_client(&client);
-    send_to_client(client.get_client_fd(), "welcom: you have been added to " + name + " channel\n");
+    send_to_client(client.get_client_fd(), "welcome: you have been added to " + name + " channel\n");
 }
