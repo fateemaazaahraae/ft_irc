@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cctype>
 #include "Client.hpp"
+#include "Channel.hpp"
 
 #define RED "\e[1;31m"
 #define WHI "\e[0;37m"
@@ -30,6 +31,7 @@
 
 
 class Client;
+class Channel;
 
 class Server
 {
@@ -40,6 +42,7 @@ class Server
         std::vector<struct pollfd> poll_fd;
         std::vector<Client> myClients;
         struct sockaddr_in serverAddr;
+        std::vector<Channel> my_channels;
 
     public :
         Server();
@@ -61,5 +64,12 @@ class Server
         std::string trim(const std::string& str);
         std::vector<std::string> get_arg(std::string cmd);
         void handle_user(Client& client, std::vector<std::string> &args);
+        void handle_priv_msg(Client& client, std::vector<std::string>& args);
+        void sending_msg_in_chan(Client& client, std::string message, std::string target);
+        void sending_msg_to_user(Client& client, std::string message, std::string target);
+        void send_to_client(int clientFd, const std::string& message);
+        void handle_join(Client& client, std::vector<std::string>& args);
+        Channel* findChannel(const std::string& name);
+
 
 };

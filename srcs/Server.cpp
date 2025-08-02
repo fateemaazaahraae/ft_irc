@@ -182,8 +182,8 @@ void Server::executeClientCommand(Client& client, const std::string& cmd)
     arg = get_arg(cmd);
     if (arg.empty())
         return ;
-    for (size_t i = 0; i < arg.size(); i++)
-        std::cout << "arg[" << i << "] = " << arg[i] << std::endl;
+    // for (size_t i = 0; i < arg.size(); i++)
+    //     std::cout << "arg[" << i << "] = " << arg[i] << std::endl;
     executeCommand(client, arg);
 }
 
@@ -198,10 +198,10 @@ void Server::executeCommand(Client &client, std::vector<std::string> &args)
         handle_nick(client, args);
     else if (args[0] == "USER")
         handle_user(client, args);
-    // else if (args[0] == "JOIN")
-    //     client.handle_join(args);
-    // else if (args[0] == "PRIVMSG")
-    //     client.handle_private_msg(args);
+   else if (args[0] == "JOIN")
+        handle_join(client, args);
+    else if (args[0] == "PRIVMSG")
+        handle_priv_msg(client, args);
     else
         send(client.get_client_fd(), "Unknown command\n", 16, 0);
 }

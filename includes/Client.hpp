@@ -3,6 +3,8 @@
 #include "Server.hpp"
 
 class Server;
+class Channel;
+
 
 class Client 
 {
@@ -38,9 +40,8 @@ class Client
         void set_client_realname(std::string& realname);
 
     //======================= client methods =================
-        void handle_user(std::vector<std::string> &args);
-        void handle_join(std::vector<std::string> &args);
-        void handle_private_msg(std::vector<std::string> &args);
-        void executeCommand(std::vector<std::string> &args);
+        // void handle_user(std::vector<std::string> &args);
+        // void handle_private_msg(std::vector<std::string> &args);
+        // void executeCommand(std::vector<std::string> &args);
 
 };
