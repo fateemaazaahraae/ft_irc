@@ -1,43 +1,51 @@
 #include "../../includes/Server.hpp"
 
+bool Server::isValidUsername(std::string& username)
+{
+    if (username.empty() || username.length() > 12)
+        return false;
+    for (size_t i = 0; i < username.length(); ++i)
+    {
+        char c = username[i];
+        if (!isalnum(c) && c != '-' && c != '_' && c != '.')
+            return false;
+    }
+    return true;
+}
+
 void Server::handle_user(Client& client, std::vector<std::string> &args)
 {
-    if (!client.get_client_authe())
+    if (!checkClientAuthorization(client))
+        return ;
+    if (!checkClientRegistration(client))
+        return ;
+    if (args.size() < 5)
     {
-        send(client.get_client_fd(), "You have to register!\n", 22, 0);
+        replyCode = 461;
+        std::string rep = reply(client.get_client_nickname(), "USER :Not enough parameters");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
         return ;
     }
-    if (args.size() < 4)
+    client.set_client_username(args[1]);
+    if (!isValidUsername(client.get_client_username()))
     {
-        send(client.get_client_fd(), "Bad arguments\n", 14, 0);
+        replyCode = 432;
+        std::string rep = reply(client.get_client_nickname(), args[1] + " :Erroneous username");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
         return ;
     }
-    if (args[1] != "0" && args[1] != "0*")
-        client.set_client_username(args[1]);
-    if (client.get_client_username().empty())
+    if (args[4][0] == ':')
     {
-        send(client.get_client_fd(), "Username is required\n", 22, 0);
-        return ;
+        std::string realname = trim(args[4].substr(1));
+        client.set_client_realname(realname);
     }
 
-    for (size_t i = 2; i < args.size(); i++)
-    {
-        if (args[i][0] == ':')
-        {
-            args[i] = args[i].substr(1);
-            args[i] = trim(args[i]);
-            client.set_client_realname(args[i]);
-            break;
-        }
-    }
     if (client.get_client_realname().empty())
     {
         send(client.get_client_fd(), "Realname is required\n", 21, 0);
         return ;
     }
+    //* welcome message
     if (!client.get_client_nickname().empty() && !client.get_client_username().empty() && !client.get_client_realname().empty())
-    {
-        std::string welcome_msg = "Welcome to the IRC " + client.get_client_nickname() + "!" + client.get_client_username() + "@irc.com\n";
-        send(client.get_client_fd(), welcome_msg.c_str(), welcome_msg.size(), 0);
-    }
+        welcomeClient(client);
 }

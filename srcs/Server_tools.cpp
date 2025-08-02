@@ -38,3 +38,53 @@ std::string Server::reply(std::string target, const std::string& message)
     reply << ":" << serverName << " " << std::setfill('0') << std::setw(3) << replyCode << " " << target << " :" << message << "\n";
     return reply.str();
 }
+
+void Server::welcomeClient(Client& client)
+{
+    replyCode = 001;
+    std::string welcomeMessage = "Welcome to the Internet Relay Network " + client.get_client_nickname() + "!" +
+                                    client.get_client_username() + "@" + client.get_client_realname();
+    std::string rep = reply(client.get_client_nickname(), welcomeMessage);
+    send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+
+    replyCode = 002;
+    std::string serverInfo = "Your host is " + serverName + ", running version ft_irc";
+    rep = reply(client.get_client_nickname(), serverInfo);
+    send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+
+    replyCode = 003;
+    std::string createdInfo = "This server was created on " + std::string(__DATE__) + " at " + std::string(__TIME__);
+    rep = reply(client.get_client_nickname(), createdInfo);
+    send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+
+    replyCode = 004;
+    std::string serverVersion = serverName + " ft_irc 1.0";
+    rep = reply(client.get_client_nickname(), serverVersion);
+    send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+    std::cout << "Client " << client.get_client_nickname() << " is now registered." << std::endl;
+    client.set_client_registered();
+}
+
+int Server::checkClientAuthorization(Client& client)
+{
+    if (!client.get_client_authe())
+    {
+        replyCode = 464;
+        std::string rep = reply(client.get_client_nickname(), "You are not authorized");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+        return 0;
+    }
+    return 1;
+}
+
+int Server::checkClientRegistration(Client& client)
+{
+    if (client.get_client_registered())
+    {
+        replyCode = 462;
+        std::string rep = reply(client.get_client_nickname(), "You are already registered");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
+        return 0;
+    }
+    return 1;
+}

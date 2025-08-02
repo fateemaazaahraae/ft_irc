@@ -29,7 +29,6 @@
 #define CYN "\e[1;36m"
 #define RESET "\e[0m"
 
-# define MAX_CLIENT 2000
 
 
 class Client;
@@ -75,6 +74,10 @@ class Server
         void handle_join(Client& client, std::vector<std::string>& args);
         Channel* findChannel(const std::string& name);
         std::string reply(std::string target, const std::string& message);
+        void welcomeClient(Client& client);
+        int checkClientAuthorization(Client& client);
+        int checkClientRegistration(Client& client);
+        bool isValidUsername(std::string& username);
 
 
 };

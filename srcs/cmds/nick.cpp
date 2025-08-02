@@ -24,19 +24,22 @@ int Server::isValidNickName(std::string str)
 
 void Server::handle_nick(Client& client, std::vector<std::string> &args)
 {
-    if (!client.get_client_authe())
-    {
-        send(client.get_client_fd(), "You have to register!\n", 22, 0);
+    if (!checkClientAuthorization(client))
         return ;
-    }
-    if (args.size() != 2)
+    if (!checkClientRegistration(client))
+        return ;
+    if (args.size() < 2)
     {
-        send(client.get_client_fd(), "Bad arguments\n", 14, 0);
+        replyCode = 431;
+        std::string rep = reply(client.get_client_nickname(), "No nickname given");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
         return ;
     }
     if (isNickTaken(args[1]))
     {
-        send(client.get_client_fd(), "Nickname is already in use\n", 27, 0);
+        replyCode = 433;
+        std::string rep = reply(client.get_client_nickname(), "Nickname is already in use");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
         return ;
     }
     if (isValidNickName(args[1]))
@@ -45,10 +48,12 @@ void Server::handle_nick(Client& client, std::vector<std::string> &args)
         std::cout << "Client set nickname" << std::endl;
     }
     else
-        send(client.get_client_fd(), "Bad nickname\n", 13, 0);
-    if (!client.get_client_nickname().empty() && !client.get_client_username().empty() && !client.get_client_realname().empty())
     {
-        std::string welcome_msg = "Welcome to the IRC " + client.get_client_nickname() + "!" + client.get_client_username() + "@irc.com\n";
-        send(client.get_client_fd(), welcome_msg.c_str(), welcome_msg.size(), 0);
+        replyCode = 432;
+        std::string rep = reply(args[1], "Bad nickname");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
     }
+    //* welcome message
+    if (!client.get_client_nickname().empty() && !client.get_client_username().empty() && !client.get_client_realname().empty())
+        welcomeClient(client);
 }

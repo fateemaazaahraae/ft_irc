@@ -4,7 +4,9 @@ void Server::handle_pass(Client& client, std::vector<std::string> &args)
 {
     if (client.get_client_authe())
     {
-        send(client.get_client_fd(), "You are already authenticated :)\n", 33, 0);
+        replyCode = 462;
+        std::string rep = reply(client.get_client_nickname(), "You are already authenticated");
+        send(client.get_client_fd(), rep.c_str(), rep.size(), 0);
         return ;
     }
     if (args.size() < 2)

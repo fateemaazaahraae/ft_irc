@@ -36,7 +36,7 @@ void Server::createServerSocket()
     serverAddr.sin_port = htons(port);
     if (bind(fd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
         throw std::runtime_error("Bind() failed");
-    if (listen(fd, MAX_CLIENT) < 0)
+    if (listen(fd, SOMAXCONN) < 0)
         throw std::runtime_error("Listen() failed");
     pollServer.fd = this->fd;
     pollServer.events = POLLIN;

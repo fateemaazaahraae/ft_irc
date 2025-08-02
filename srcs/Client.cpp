@@ -8,6 +8,7 @@ Client::Client()
     username = "";
     realname = "";
     is_authorized = false;
+    is_registered = false;
 }
 
 //======================== getters =======================
@@ -22,6 +23,8 @@ struct sockaddr_in& Client::get_client_addr()
 }
 
 int Client::get_client_authe() { return is_authorized; }
+
+int Client::get_client_registered() { return is_registered; }
 
 std::string& Client::get_client_nickname() { return nickname; }
 
@@ -62,6 +65,11 @@ void Client::set_client_addr(struct sockaddr_in addr)
 void Client::set_client_authe()
 {
     is_authorized = !is_authorized;
+}
+
+void Client::set_client_registered()
+{
+    is_registered = !is_registered;
 }
 
 void Client::set_client_nickname(std::string& nickname)
