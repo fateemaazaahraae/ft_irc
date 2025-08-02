@@ -15,7 +15,7 @@ void  Server::sending_msg_in_chan(Client& client, std::string message, std::stri
             if (members[i] != &client)
             {
                 std::cout<< "this is >>> " << members[i]->get_client_fd();
-                send_to_client(members[i]->get_client_fd(),"PRIVMSG: " + message + " from: (" + client.get_client_username() + ") in " + target + " channel\n");
+                send_to_client(members[i]->get_client_fd(),"PRIVMSG: " + message + " from: (" + client.get_client_nickname() + ") in " + target + " channel\n");
             }
             i++;
         }
@@ -28,7 +28,7 @@ void Server::sending_msg_to_user(Client& client, std::string message, std::strin
         {
             if (myClients[i].get_client_nickname() == target)
             {
-                send_to_client(myClients[i].get_client_fd(), "PRIVMSG: " + message + " from: (" + client.get_client_username() + ")\n");
+                send_to_client(myClients[i].get_client_fd(), "PRIVMSG: " + message + " from: (" + client.get_client_nickname() + ")\n");
                 return;
             }
             i++;
