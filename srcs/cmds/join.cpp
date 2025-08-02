@@ -20,11 +20,10 @@ Channel* Server::findChannel(const std::string& name)
 
 void Server::handle_join(Client& client, std::vector<std::string>& args)
 {
-    if (!client.get_client_authe())
-    {
-        send_to_client(client.get_client_fd(),  "You are not registered :(\n");
+    if (!checkClientAuthorization(client))
         return ;
-    }
+    // if (!checkClientRegistration(client))
+    //     return ;
     if (args.size() != 2)
     {
         send_to_client(client.get_client_fd(),  "bad join argument -_-\n");
