@@ -13,10 +13,7 @@ void  Server::sending_msg_in_chan(Client& client, std::string message, std::stri
         while (i < members.size())
         {
             if (members[i] != &client)
-            {
-                std::cout<< "this is >>> " << members[i]->get_client_fd();
                 send_to_client(members[i]->get_client_fd(),"PRIVMSG: " + message + " from: (" + client.get_client_nickname() + ") in " + target + " channel\n");
-            }
             i++;
         }
 }
@@ -38,10 +35,12 @@ void Server::sending_msg_to_user(Client& client, std::string message, std::strin
 
 void Server::handle_priv_msg(Client& client, std::vector<std::string>& args)
 {
-    if (!client.get_client_authe())
+    if (!checkClientAuthorization(client))
+        return ;
+    if (!client.get_client_registered())
     {
-        send_to_client(client.get_client_fd(),  "You are not registed :(\n");
-        return;
+        send_to_client(client.get_client_fd(), "You are not registered yet\n");
+        return ;
     }
     if (args.size() < 3)
     {
