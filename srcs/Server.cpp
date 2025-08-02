@@ -210,5 +210,5 @@ void Server::executeCommand(Client &client, std::vector<std::string> &args)
 Server::~Server(){}
 
 //TODO   ## client command ##
-//TODO ---->   (ouiam) 1. JOIN & PRIVMSG
+//TODO ---->   (ouiam) 1. JOIN & PRIVMSG (9rib ghanhma9 🙂​)
 //TODO ---->   (tiima) 2. PASS & NICK & USER
