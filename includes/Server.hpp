@@ -14,10 +14,12 @@
 # include <exception>
 # include <limits.h>
 # include <signal.h>
-#include <algorithm>
-#include <cctype>
-#include "Client.hpp"
-#include "Channel.hpp"
+# include <algorithm>
+# include <cctype>
+# include <iomanip>
+# include <sstream>
+# include "Client.hpp"
+# include "Channel.hpp"
 
 #define RED "\e[1;31m"
 #define WHI "\e[0;37m"
@@ -38,7 +40,9 @@ class Server
     private :
         int fd;
         int port;
+        int replyCode;
         std::string pass;
+        std::string serverName;
         std::vector<struct pollfd> poll_fd;
         std::vector<Client> myClients;
         struct sockaddr_in serverAddr;
@@ -70,6 +74,7 @@ class Server
         void send_to_client(int clientFd, const std::string& message);
         void handle_join(Client& client, std::vector<std::string>& args);
         Channel* findChannel(const std::string& name);
+        std::string reply(std::string target, const std::string& message);
 
 
 };

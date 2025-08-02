@@ -29,3 +29,12 @@ std::string &Server::convertCmdToUpperCase(std::string &str)
         str[i] = toupper(str[i]);
     return str;
 }
+
+std::string Server::reply(std::string target, const std::string& message)
+{
+    std::ostringstream reply;
+    if (target.empty())
+        target = "*";
+    reply << ":" << serverName << " " << std::setfill('0') << std::setw(3) << replyCode << " " << target << " :" << message << "\n";
+    return reply.str();
+}

@@ -34,7 +34,7 @@ void Server::handle_join(Client& client, std::vector<std::string>& args)
         return;
     }
     std::string name = args[1];
-    if (name.empty() || name[0] != '#') 
+    if (name.empty() || name[0] != '#')
     {
         send_to_client(client.get_client_fd(),  name + " : is invalid channel name\n");
         return;
@@ -45,7 +45,7 @@ void Server::handle_join(Client& client, std::vector<std::string>& args)
         Channel new_channel(name);
         new_channel.add_client(&client);
         my_channels.push_back(new_channel);
-        std::cout<<"channel " << name << " has been created successfully !\n";
+        std::cout << "channel " << name << " has been created successfully !\n";
     } 
     else 
         chan->add_client(&client);

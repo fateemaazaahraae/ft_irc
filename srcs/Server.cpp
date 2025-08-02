@@ -7,6 +7,8 @@ Server::Server()
     fd = -1;
     port = 0;
     pass = "";
+    serverName = "ft_irc_server.com";
+    replyCode = 0;
 }
 
 void Server::initServer(std::string port, std::string pass)

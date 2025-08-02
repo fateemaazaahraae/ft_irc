@@ -6,9 +6,10 @@ class Client;
 
 class Channel
 {
-    private:
+    private :
         std::string name;
         std::vector<Client *> my_clients;
+
     public :
         Channel(const std::string& name);
         //================geters======================
