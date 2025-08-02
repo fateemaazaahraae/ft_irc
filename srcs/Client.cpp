@@ -9,6 +9,7 @@ Client::Client()
     realname = "";
     is_authorized = false;
     is_registered = false;
+    // is_operator = false;
 }
 
 //======================== getters =======================
@@ -31,6 +32,7 @@ std::string& Client::get_client_nickname() { return nickname; }
 std::string& Client::get_client_username() { return username; }
 
 std::string& Client::get_client_realname() { return realname; }
+// bool Client::get_client_operator() { return is_operator; }
 
 
 //======================= setters =======================
@@ -77,6 +79,9 @@ void Client::set_client_nickname(std::string& nickname)
     this->nickname = nickname;
 }
 
-
+// void Client::set_client_operator()
+// {
+//     is_operator = !is_operator;
+// }
 
 Client::~Client() {}

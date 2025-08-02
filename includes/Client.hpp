@@ -17,6 +17,7 @@ class Client
         struct sockaddr_in clientAddr;
         bool    is_authorized;
         bool    is_registered;
+        // bool    is_operator;
 
     public :
         Client();
@@ -31,6 +32,7 @@ class Client
         std::string& get_client_nickname();
         std::string& get_client_username();
         std::string& get_client_realname();
+        bool get_client_operator();
 
     //======================= setters =======================
         void set_client_fd(int fd);
@@ -41,6 +43,7 @@ class Client
         void set_client_nickname(std::string& nickname);
         void set_client_username(std::string& username);
         void set_client_realname(std::string& realname);
+        // void set_client_operator();
 
     //======================= client methods =================
         // void handle_user(std::vector<std::string> &args);

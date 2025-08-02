@@ -9,10 +9,15 @@ void  Server::sending_msg_in_chan(Client& client, std::string message, std::stri
             return;
         }
         const std::vector<Client*>& members = chan->get_clients();
+        size_t j = -1;
+        while (++j < members.size())
+        {
+            std::cout<< "member num [" << j << "] and it fd = " << members[j]->get_client_fd() << " and it nick name is: " << members[j]->get_client_nickname() << "\n";
+        }
         size_t i = 0;
         while (i < members.size())
         {
-            if (members[i] != &client)
+            if (members[i]->get_client_fd() != client.get_client_fd())
                 send_to_client(members[i]->get_client_fd(),"PRIVMSG: " + message + " from: (" + client.get_client_nickname() + ") in " + target + " channel\n");
             i++;
         }
