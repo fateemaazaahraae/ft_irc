@@ -26,9 +26,9 @@ void Server::sending_msg_to_user(Client& client, std::string message, std::strin
         size_t i = 0;
         while (i < myClients.size())
         {
-            if (myClients[i].get_client_username() == target)
+            if (myClients[i].get_client_nickname() == target)
             {
-                send_to_client(myClients[i].get_client_fd(), " PRIVMSG: " + message + " from: (" + client.get_client_username() + ")\n");
+                send_to_client(myClients[i].get_client_fd(), "PRIVMSG: " + message + " from: (" + client.get_client_username() + ")\n");
                 return;
             }
             i++;
