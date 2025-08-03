@@ -75,7 +75,11 @@ void Server::removeClient(int clientFd)
     for (std::vector<Client*>::iterator it = myClients.begin(); it != myClients.end(); )
     {
         if ((*it)->get_client_fd() == clientFd)
+        {
+            close((*it)->get_client_fd());
+            delete *it;
             it = myClients.erase(it);
+        }
         else
             ++it;
     }
@@ -90,7 +94,6 @@ void Server::receiveNewData(int clientFd)
     if (readBytes <= 0)
     {
         std::cout << RED << "Client Disconnected (fd = " << clientFd << ")" << RESET << std::endl;
-        close(clientFd);
         removeClient(clientFd);
     }
     else
