@@ -33,6 +33,11 @@ void Server::sending_msg_to_user(Client* client, std::string message, std::strin
         {
             if (myClients[i]->get_client_nickname() == target)
             {
+                // if (myClients[i]->get_client_nickname() == client->get_client_nickname()) //! this is for sending client message to themselves
+                // {
+                //     send_to_client(myClients[i]->get_client_fd(), "you can not send message to your self (T-T)\n");
+                //     return ;
+                // }
                 send_to_client(myClients[i]->get_client_fd(), "PRIVMSG: " + message + " from: (" + client->get_client_nickname() + ")\n");
                 return;
             }
