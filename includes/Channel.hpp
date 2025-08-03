@@ -23,5 +23,6 @@ class Channel
         void add_client(Client* client);
         void add_operator(int fd);
         bool is_client_in_channel(Client* client) const;
+        bool is_operator_in_channel(int fd) const;
 
 };

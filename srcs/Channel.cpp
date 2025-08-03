@@ -67,3 +67,15 @@ bool Channel::is_client_in_channel(Client* client) const
     }
     return false;
 }
+
+bool Channel::is_operator_in_channel(int fd) const
+{
+    size_t i = 0;
+    while (i < operators.size())
+    {
+        if (fd == operators[i])
+            return true;
+        i++;
+    }
+    return false;
+}

@@ -208,14 +208,14 @@ void Server::executeCommand(Client *client, std::vector<std::string> &args)
         handle_join(client, args);
     else if (args[0] == "PRIVMSG")
         handle_priv_msg(client, args);
-    else if (args[0] == "KICK")
-        handle_kick(client, args);
-    else if (args[0] == "INVITE")
-        handle_kick(client, args);
-    else if (args[0] == "TOPIC")
-        handle_kick(client, args);
+    // else if (args[0] == "KICK")
+    //     handle_kick(client, args);
+    // else if (args[0] == "INVITE")
+    //     handle_kick(client, args);
+    // else if (args[0] == "TOPIC")
+    //     handle_kick(client, args);
     else if (args[0] == "MODE")
-        handle_kick(client, args);  
+        handle_mode(client, args);  
     else
         send_to_client(client->get_client_fd(), "Unknown command\n");
 }
