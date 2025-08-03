@@ -23,16 +23,24 @@ void Server::handle_kick(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
-    std::string targetNickname = args[1];
-    std::string channelName = args[2];
+    std::string channelName = args[1];
+    std::string targetNickname = args[2];
     std::string reason = "";
-    if (!args[3].empty()) //! Check if the reason is provided
-        reason = args[3];
+    if (args.size() > 3) //! Check if the reason is provided
+    if (!args[3].empty())
+    reason = trim(args[3].substr(1));
     Channel* channel = findChannel(channelName);
     if (!channel) //! Check if the channel exists
     {
         replyCode = 403;
         std::string rep = reply(client->get_client_nickname(), "No such channel");
+        send_to_client(client->get_client_fd(), rep);
+        return ;
+    }
+    if (!channel->is_operator_in_channel(client->get_client_fd())) //! Check if the client is an operator in the channel
+    {
+        replyCode = 482;
+        std::string rep = reply(client->get_client_nickname(), "You're not channel operator");
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
@@ -51,15 +59,13 @@ void Server::handle_kick(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
-    if (!channel->isClientAnOperator(client)) //! Check if the client is an operator in the channel
-    {
-        replyCode = 482;
-        std::string rep = reply(client->get_client_nickname(), "You're not channel operator");
-        send_to_client(client->get_client_fd(), rep);
-        return ;
-    }
-    std::cout << "target user " << targetClient->get_client_nickname() 
-              << " has been kicked from channel " << channelName 
-              << " by operator " << client->get_client_nickname() 
-              << " for reason: " << reason << std::endl;
+    channel->removeClient(targetClient->get_client_fd()); //! Remove the target client from the channel
+    std::string kickMessage = ":" + client->get_client_nickname() + " KICK " + channelName + " " + targetClient->get_client_nickname();
+    if (!reason.empty())
+        kickMessage += " :" + reason;
+    else
+        kickMessage += " :No reason provided";
+    sending_msg_in_chan(client, kickMessage, channelName); //! Notify the channel about the kick
+    std::string rep = reply(targetClient->get_client_nickname(), "You have been kicked from " + channelName);
+    send_to_client(targetClient->get_client_fd(), rep);
 }

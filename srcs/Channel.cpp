@@ -9,20 +9,13 @@ Channel::Channel(const Channel& other)
     operators = other.operators;
 }
 
-const std::string& Channel::get_name() const
-{
-    return name;
-}
+const std::string& Channel::getTopic() const { return topic; }
 
-const std::vector<Client*>& Channel::get_clients() const
-{
-    return my_clients;
-}
+const std::string& Channel::get_name() const { return name; }
 
-const std::vector<int> &Channel::get_operators()
-{
-    return operators;
-}
+const std::vector<Client*>& Channel::get_clients() const { return my_clients; }
+
+const std::vector<int>& Channel::get_operators() const { return operators; }
 
 void Channel::add_client(Client* client)
 {
@@ -54,14 +47,34 @@ bool Channel::is_client_in_channel(Client* client) const
     return false;
 }
 
-bool Channel::isClientAnOperator(Client* client) const
+
+bool Channel::is_operator_in_channel(int fd) const
 {
     size_t i = 0;
     while (i < operators.size())
     {
-        if (operators[i] == client->get_client_fd())
+        if (fd == operators[i])
             return true;
         i++;
     }
     return false;
+}
+
+void Channel::removeClient(int fd)
+{
+    size_t i = 0;
+    while (i < my_clients.size())
+    {
+        if (my_clients[i]->get_client_fd() == fd)
+        {
+            my_clients.erase(my_clients.begin() + i);
+            return;
+        }
+        i++;
+    }
+}
+
+void Channel::set_topic(const std::string& t)
+{
+    topic = t;
 }

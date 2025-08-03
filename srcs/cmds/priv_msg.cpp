@@ -1,7 +1,5 @@
 # include "../../includes/Server.hpp"
 
-
-
 void  Server::sending_msg_in_chan(Client* client, std::string message, std::string target)
 {
         Channel* chan = findChannel(target);
@@ -33,11 +31,6 @@ void Server::sending_msg_to_user(Client* client, std::string message, std::strin
         {
             if (myClients[i]->get_client_nickname() == target)
             {
-                // if (myClients[i]->get_client_nickname() == client->get_client_nickname()) //! this is for sending client message to themselves
-                // {
-                //     send_to_client(myClients[i]->get_client_fd(), "you can not send message to your self (T-T)\n");
-                //     return ;
-                // }
                 send_to_client(myClients[i]->get_client_fd(), "PRIVMSG: " + message + " from: (" + client->get_client_nickname() + ")\n");
                 return;
             }
@@ -50,11 +43,8 @@ void Server::handle_priv_msg(Client* client, std::vector<std::string>& args)
 {
     if (!checkClientAuthorization(client))
         return ;
-    if (!client->get_client_registered())
-    {
-        send_to_client(client->get_client_fd(), "You are not registered yet\n");
+    if (!checkClientRegistration(client))
         return ;
-    }
     if (args.size() < 3)
     {
         send_to_client(client->get_client_fd(), "not enough parameters for PRIVMSG\n");

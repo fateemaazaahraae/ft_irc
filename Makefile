@@ -2,7 +2,10 @@ NAME = ircserv
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRC = ./srcs/main.cpp ./srcs/Server.cpp ./srcs/Client.cpp ./srcs/Server_tools.cpp ./srcs/cmds/pass.cpp ./srcs/cmds/nick.cpp ./srcs/cmds/user.cpp ./srcs/Channel.cpp ./srcs/cmds/join.cpp ./srcs/cmds/priv_msg.cpp
+SRC = ./srcs/main.cpp ./srcs/Server.cpp ./srcs/Client.cpp ./srcs/Server_tools.cpp \
+		./srcs/cmds/pass.cpp ./srcs/cmds/nick.cpp ./srcs/cmds/user.cpp ./srcs/Channel.cpp \
+		./srcs/cmds/join.cpp ./srcs/cmds/priv_msg.cpp ./srcs/cmds/kick.cpp ./srcs/cmds/mode.cpp \
+		./srcs/cmds/topic.cpp
 OBJ = $(SRC:%.cpp=%.o)
 
 # Color codes

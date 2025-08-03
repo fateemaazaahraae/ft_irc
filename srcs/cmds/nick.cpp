@@ -26,8 +26,8 @@ void Server::handle_nick(Client* client, std::vector<std::string> &args)
 {
     if (!checkClientAuthorization(client))
         return ;
-    if (!checkClientRegistration(client))
-        return ;
+    // if (!checkDoubleClientRegistration(client))
+    //     return ;
     if (args.size() < 2)
     {
         replyCode = 431;

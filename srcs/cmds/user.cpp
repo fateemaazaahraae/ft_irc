@@ -17,7 +17,7 @@ void Server::handle_user(Client* client, std::vector<std::string> &args)
 {
     if (!checkClientAuthorization(client))
         return ;
-    if (!checkClientRegistration(client))
+    if (!checkDoubleClientRegistration(client))
         return ;
     if (args.size() < 5)
     {

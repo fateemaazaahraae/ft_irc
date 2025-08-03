@@ -210,12 +210,12 @@ void Server::executeCommand(Client *client, std::vector<std::string> &args)
         handle_priv_msg(client, args);
     else if (args[0] == "KICK")
         handle_kick(client, args);
+    else if (args[0] == "TOPIC")
+        handle_topic(client, args);
     // else if (args[0] == "INVITE")
     //     handle_invite(client, args);
-    // else if (args[0] == "TOPIC")
-    //     handle_topic(client, args);
-    // else if (args[0] == "MODE")
-    //     handle_mode(client, args);  
+    else if (args[0] == "MODE")
+        handle_mode(client, args);  
     else
         send_to_client(client->get_client_fd(), "Unknown command\n");
 }

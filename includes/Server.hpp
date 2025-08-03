@@ -76,10 +76,15 @@ class Server
         std::string reply(std::string target, const std::string& message);
         void welcomeClient(Client* client);
         int checkClientAuthorization(Client* client);
-        int checkClientRegistration(Client* client);
+        bool checkClientRegistration(Client* client);
         bool isValidUsername(std::string& username);
         void clean_up();
+        void handle_mode(Client* client, std::vector<std::string>& args);
         void handle_kick(Client* client, std::vector<std::string>& args);
         Client* getClient(std::string nickname);
+        int checkDoubleClientRegistration(Client* client);
+        void handle_topic(Client* client, std::vector<std::string>& args);
+        void displayTopic(Client* client, std::string channelName);
+        void changeTopic(Client* client, std::string channelName, std::string topic);
 
 };

@@ -77,7 +77,7 @@ int Server::checkClientAuthorization(Client* client)
     return 1;
 }
 
-int Server::checkClientRegistration(Client* client)
+int Server::checkDoubleClientRegistration(Client* client)
 {
     if (client->get_client_registered())
     {
@@ -87,4 +87,16 @@ int Server::checkClientRegistration(Client* client)
         return 0;
     }
     return 1;
+}
+
+bool Server::checkClientRegistration(Client* client)
+{
+    if (!client->get_client_registered())
+    {
+        replyCode = 451;
+        std::string rep = reply(client->get_client_nickname(), "You are not registered");
+        send_to_client(client->get_client_fd(), rep);
+        return false;
+    }
+    return true;
 }

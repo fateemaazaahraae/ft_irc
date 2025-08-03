@@ -9,7 +9,7 @@ void Server::send_to_client(int clientFd, const std::string& message)
 Channel* Server::findChannel(const std::string& name) 
 {
     size_t i = 0;
-    while ( i < my_channels.size()) 
+    while (i < my_channels.size()) 
     {
         if (my_channels[i]->get_name() == name)
             return my_channels[i];
@@ -22,11 +22,8 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
 {
     if (!checkClientAuthorization(client))
         return ;
-    if (!client->get_client_registered())
-    {
-        send_to_client(client->get_client_fd(), "You are not registered yet\n");
+    if (!checkClientRegistration(client))
         return ;
-    }
     if (args.size() != 2)
     {
         send_to_client(client->get_client_fd(),  "bad join argument -_-\n");
@@ -41,7 +38,6 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
     Channel* chan = findChannel(name);
     if (chan == NULL) 
     {
-        // client.set_client_operator();
         Channel new_channel(name);
         new_channel.add_client(client);
         new_channel.add_operator(client->get_client_fd());
