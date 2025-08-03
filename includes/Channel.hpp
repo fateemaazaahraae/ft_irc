@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Client.hpp"
+
 class Server;
 class Client;
 
@@ -19,9 +20,11 @@ class Channel
         const std::vector<Client*>& get_clients() const;
         const std::vector<int>& get_operators();
         //================methods======================
-        bool it_is_a_channel_member(Client* client) const;
         void add_client(Client* client);
         void add_operator(int fd);
         bool is_client_in_channel(Client* client) const;
+        bool isClientAnOperator(Client* client) const;
+
+        Client* findClient(std::string nickname) const;
 
 };
