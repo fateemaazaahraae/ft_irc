@@ -79,6 +79,7 @@ class Server
         int checkClientRegistration(Client* client);
         bool isValidUsername(std::string& username);
         void clean_up();
+        void handle_kick(Client* client, std::vector<std::string>& args);
 
 
 };
