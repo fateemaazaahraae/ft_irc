@@ -17,11 +17,11 @@ class Client
         struct sockaddr_in clientAddr;
         bool    is_authorized;
         bool    is_registered;
-        // bool    is_operator;
 
     public :
         Client();
         ~Client();
+        Client(const Client& other);
 
     //======================== getters =======================
         int get_client_fd() const;
@@ -43,11 +43,5 @@ class Client
         void set_client_nickname(std::string& nickname);
         void set_client_username(std::string& username);
         void set_client_realname(std::string& realname);
-        // void set_client_operator();
-
-    //======================= client methods =================
-        // void handle_user(std::vector<std::string> &args);
-        // void handle_private_msg(std::vector<std::string> &args);
-        // void executeCommand(std::vector<std::string> &args);
 
 };

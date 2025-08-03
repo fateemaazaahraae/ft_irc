@@ -1,55 +1,58 @@
 # include "../../includes/Server.hpp"
 
-void  Server::sending_msg_in_chan(Client& client, std::string message, std::string target)
+
+
+void  Server::sending_msg_in_chan(Client* client, std::string message, std::string target)
 {
         Channel* chan = findChannel(target);
-        if (!chan)
+        if (!chan || !chan->is_client_in_channel(client))
         {
-            send_to_client(client.get_client_fd(), "you are not a member of a channel named: " + target + "\n");
+            send_to_client(client->get_client_fd(), "you are not a member of a channel named: " + target + "\n");
             return;
         }
         const std::vector<Client*>& members = chan->get_clients();
-        size_t j = -1;
-        while (++j < members.size())
+        size_t j = 0;
+        while (j < members.size())
         {
             std::cout<< "member num [" << j << "] and it fd = " << members[j]->get_client_fd() << " and it nick name is: " << members[j]->get_client_nickname() << "\n";
+            j++;
         }
         size_t i = 0;
         while (i < members.size())
         {
-            if (members[i]->get_client_fd() != client.get_client_fd())
-                send_to_client(members[i]->get_client_fd(),"PRIVMSG: " + message + " from: (" + client.get_client_nickname() + ") in " + target + " channel\n");
+            if (members[i]->get_client_fd() != client->get_client_fd())
+                send_to_client(members[i]->get_client_fd(),"PRIVMSG: " + message + " from: (" + client->get_client_nickname() + ") in " + target + " channel\n");
             i++;
         }
 }
 
-void Server::sending_msg_to_user(Client& client, std::string message, std::string target)
+void Server::sending_msg_to_user(Client* client, std::string message, std::string target)
 {
         size_t i = 0;
         while (i < myClients.size())
         {
-            if (myClients[i].get_client_nickname() == target)
+            if (myClients[i]->get_client_nickname() == target)
             {
-                send_to_client(myClients[i].get_client_fd(), "PRIVMSG: " + message + " from: (" + client.get_client_nickname() + ")\n");
+                send_to_client(myClients[i]->get_client_fd(), "PRIVMSG: " + message + " from: (" + client->get_client_nickname() + ")\n");
                 return;
             }
             i++;
         }
-        send_to_client(client.get_client_fd(), "the user named " + target + " not found\n");   
+        send_to_client(client->get_client_fd(), "the user named " + target + " not found\n");
 }
 
-void Server::handle_priv_msg(Client& client, std::vector<std::string>& args)
+void Server::handle_priv_msg(Client* client, std::vector<std::string>& args)
 {
     if (!checkClientAuthorization(client))
         return ;
-    if (!client.get_client_registered())
+    if (!client->get_client_registered())
     {
-        send_to_client(client.get_client_fd(), "You are not registered yet\n");
+        send_to_client(client->get_client_fd(), "You are not registered yet\n");
         return ;
     }
     if (args.size() < 3)
     {
-        send_to_client(client.get_client_fd(), "not enough parameters for PRIVMSG\n");
+        send_to_client(client->get_client_fd(), "not enough parameters for PRIVMSG\n");
         return;
     }
     std::string target = args[1];

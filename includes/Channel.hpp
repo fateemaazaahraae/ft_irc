@@ -9,17 +9,19 @@ class Channel
     private :
         std::string name;
         std::vector<Client *> my_clients;
-        std::vector<int> oprators;
+        std::vector<int> operators;
 
     public :
         Channel(const std::string& name);
+        Channel(const Channel& other);
         //================geters======================
         const std::string& get_name() const;
         const std::vector<Client*>& get_clients() const;
-        const std::vector<int>& get_opaer();
+        const std::vector<int>& get_operators();
         //================methods======================
         bool it_is_a_channel_member(Client* client) const;
         void add_client(Client* client);
         void add_operator(int fd);
+        bool is_client_in_channel(Client* client) const;
 
 };

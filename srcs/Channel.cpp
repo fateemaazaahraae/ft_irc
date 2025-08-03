@@ -2,6 +2,13 @@
 
 Channel::Channel(const std::string& n): name(n){}
 
+Channel::Channel(const Channel& other)
+{
+    name = other.name;
+    my_clients = other.my_clients;
+    operators = other.operators;
+}
+
 const std::string& Channel::get_name() const
 {
     return name;
@@ -24,9 +31,9 @@ bool Channel::it_is_a_channel_member(Client* client) const
     return false;
 }
 
-const std::vector<int> &Channel::get_opaer()
+const std::vector<int> &Channel::get_operators()
 {
-    return oprators;
+    return operators;
 }
 
 void Channel::add_client(Client* client)
@@ -37,14 +44,26 @@ void Channel::add_client(Client* client)
 
 void Channel::add_operator(int fd)
 {
-    std::cout<<">>>>>> fd = " << fd << "\n";
+    std::cout<<">>>>> fd = " << fd << "\n";
     size_t i = 0;
-    while (i < oprators.size())
+    while (i < operators.size())
     {
-        if (oprators[i] == fd)
+        if (operators[i] == fd)
             return;
         i++;
     }
-    oprators.push_back(fd);
-    std::cout << "opp[0] = " << oprators[0]<< "\n";
+    operators.push_back(fd);
+    std::cout << "opp[0] = " << operators[0]<< "\n";
+}
+
+bool Channel::is_client_in_channel(Client* client) const
+{
+    size_t i = 0;
+    while (i < my_clients.size())
+    {
+        if (my_clients[i]->get_client_fd() == client->get_client_fd())
+            return true;
+        i++;
+    }
+    return false;
 }

@@ -33,5 +33,6 @@ int main(int ac, char **av)
     catch (std::exception &e)
     {
         std::cout << RED << "Error: " << e.what() << RESET << std::endl;
+        my_serv.clean_up();
     }
 }

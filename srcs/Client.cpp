@@ -12,6 +12,19 @@ Client::Client()
     // is_operator = false;
 }
 
+Client::Client(const Client& other)
+{
+    fd = other.fd;
+    buffer = other.buffer;
+    nickname = other.nickname;
+    username = other.username;
+    realname = other.realname;
+    clientAddr = other.clientAddr;
+    is_authorized = other.is_authorized;
+    is_registered = other.is_registered;
+    // is_operator = other.is_operator;
+}
+
 //======================== getters =======================
 
 int Client::get_client_fd() const { return fd; }

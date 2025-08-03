@@ -54,7 +54,7 @@ void Server::acceptNewConnection()
     if (new_fd < 0)
         return ;
     new_client.set_client_fd(new_fd);
-    myClients.push_back(new_client);
+    myClients.push_back(new Client(new_client));
     clientPoll.fd = new_fd;
     clientPoll.events = POLLIN;
     clientPoll.revents = 0;
@@ -72,9 +72,9 @@ void Server::removeClient(int clientFd)
             ++it;
     }
 
-    for (std::vector<Client>::iterator it = myClients.begin(); it != myClients.end(); )
+    for (std::vector<Client*>::iterator it = myClients.begin(); it != myClients.end(); )
     {
-        if (it->get_client_fd() == clientFd)
+        if ((*it)->get_client_fd() == clientFd)
             it = myClients.erase(it);
         else
             ++it;
@@ -98,9 +98,9 @@ void Server::receiveNewData(int clientFd)
         buffer[readBytes] = '\0';
          for (size_t i = 0; i < myClients.size(); ++i)
         {
-            if (myClients[i].get_client_fd() == clientFd)
+            if (myClients[i]->get_client_fd() == clientFd)
             {
-                std::string &buf = myClients[i].get_client_buffer();
+                std::string &buf = myClients[i]->get_client_buffer();
                 buf += buffer;
                 size_t pos;
                 while ((pos = buf.find("\n")) != std::string::npos)
@@ -123,7 +123,10 @@ void Server::serverLoop()
         if (poll_count < 0)
         {
             if (!g_is_running)
+            {
+                clean_up();
                 break;
+            }
             throw std::runtime_error("poll() failed");
         }
         for (size_t i = 0; i < this->poll_fd.size(); i++)
@@ -176,7 +179,7 @@ std::vector<std::string> Server::get_arg(std::string cmd)
 }
 
 
-void Server::executeClientCommand(Client& client, const std::string& cmd)
+void Server::executeClientCommand(Client* client, const std::string& cmd)
 {
     std::vector<std::string> arg;
     if (cmd.empty())
@@ -187,7 +190,7 @@ void Server::executeClientCommand(Client& client, const std::string& cmd)
     executeCommand(client, arg);
 }
 
-void Server::executeCommand(Client &client, std::vector<std::string> &args)
+void Server::executeCommand(Client *client, std::vector<std::string> &args)
 {
     if (args.empty())
         return;
@@ -203,12 +206,40 @@ void Server::executeCommand(Client &client, std::vector<std::string> &args)
     else if (args[0] == "PRIVMSG")
         handle_priv_msg(client, args);
     else
-        send_to_client(client.get_client_fd(), "Unknown command\n");
+        send_to_client(client->get_client_fd(), "Unknown command\n");
 }
 
+
+void Server::clean_up()
+{
+    size_t i = 0;
+    while (i < myClients.size())
+    {
+        if (myClients[i])
+        {
+            close(myClients[i]->get_client_fd());
+            delete myClients[i];
+            myClients[i] = NULL;
+        }
+        i++;
+    }
+    myClients.clear();
+    i = 0;
+    while (i < my_channels.size())
+    {
+        if (my_channels[i])
+        {
+            delete my_channels[i];
+            my_channels[i] = NULL;
+        }
+        i++;
+    }
+    my_channels.clear();
+    close(fd);
+}
 
 Server::~Server(){}
 
 //TODO   ## client command ##
-//TODO ---->   (ouiam) 1. JOIN & PRIVMSG (9rib ghanhma9 🙂​)
+//TODO ---->   (ouiam) 1. JOIN & PRIVMSG 
 //TODO ---->   (tiima) 2. PASS & NICK & USER
