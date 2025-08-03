@@ -80,5 +80,6 @@ class Server
         bool isValidUsername(std::string& username);
         void clean_up();
         void handle_mode(Client* client, std::vector<std::string>& args);
+        void handle_kick(Client* client, std::vector<std::string>& args);
 
 };
