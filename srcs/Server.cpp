@@ -212,8 +212,8 @@ void Server::executeCommand(Client *client, std::vector<std::string> &args)
         handle_kick(client, args);
     else if (args[0] == "TOPIC")
         handle_topic(client, args);
-    // else if (args[0] == "INVITE")
-    //     handle_invite(client, args);
+    else if (args[0] == "INVITE")
+        handle_invite(client, args);
     else if (args[0] == "MODE")
         handle_mode(client, args);  
     else

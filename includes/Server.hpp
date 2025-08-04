@@ -86,5 +86,7 @@ class Server
         void handle_topic(Client* client, std::vector<std::string>& args);
         void displayTopic(Client* client, std::string channelName);
         void changeTopic(Client* client, std::string channelName, std::string topic);
+        void handle_invite(Client* client, std::vector<std::string>& args);
+
 
 };

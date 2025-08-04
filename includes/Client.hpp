@@ -17,6 +17,7 @@ class Client
         struct sockaddr_in clientAddr;
         bool    is_authorized;
         bool    is_registered;
+        std::vector<std::string> invitedChannels;
 
     public :
         Client();
@@ -43,5 +44,6 @@ class Client
         void set_client_nickname(std::string& nickname);
         void set_client_username(std::string& username);
         void set_client_realname(std::string& realname);
+        void set_invitedChannels(std::string& channelName);
 
 };

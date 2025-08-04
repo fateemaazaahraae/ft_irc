@@ -32,7 +32,7 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
     std::string name = args[1];
     if (name.empty() || name[0] != '#')
     {
-        send_to_client(client->get_client_fd(),  name + " : is invalid channel name\n");
+        send_to_client(client->get_client_fd(),  name + " : invalid channel name\n");
         return ;
     }
     Channel* chan = findChannel(name);
@@ -42,19 +42,10 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         new_channel.add_client(client);
         new_channel.add_operator(client->get_client_fd());
         my_channels.push_back(new Channel(new_channel));
-        std::cout << "channel " << name << " has been created successfully !\n";
+        std::cout << "channel " << name << ": has been created successfully !\n";
         chan = my_channels.back();
     } 
     else 
         chan->add_client(client);
-    send_to_client(client->get_client_fd(), "welcome: you have been added to " + name + " channel\n");
-    const std::vector<int>& vec = chan->get_operators();
-    size_t j = 0;
-    while (j < vec.size())
-    {
-        std::cout << "the client fd = " << client->get_client_fd() << " and the opp = " << vec[j] << "\n";
-        if (client->get_client_fd() == vec[j])
-            std::cout << "operator " << j << " -- " << vec[j] << std::endl;
-        j++; 
-    }
+    send_to_client(client->get_client_fd(), "Welcome: you have been added to " + name + " channel\n");
 }

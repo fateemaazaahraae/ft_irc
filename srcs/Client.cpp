@@ -92,9 +92,9 @@ void Client::set_client_nickname(std::string& nickname)
     this->nickname = nickname;
 }
 
-// void Client::set_client_operator()
-// {
-//     is_operator = !is_operator;
-// }
+void Client::set_invitedChannels(std::string& channelName)
+{
+    this->invitedChannels.push_back(channelName);
+}
 
 Client::~Client() {}
