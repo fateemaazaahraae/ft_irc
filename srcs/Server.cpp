@@ -110,6 +110,7 @@ void Server::receiveNewData(int clientFd)
                 {
                     std::string cmd = buf.substr(0, pos);
                     buf.erase(0, pos + 1);
+                    std::cout << "Received command: " << cmd << std::endl;
                     executeClientCommand(myClients[i], cmd);
                 }
                 break;
