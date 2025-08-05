@@ -114,5 +114,6 @@
     "random": "cpp",
     "ratio": "cpp",
     "cinttypes": "cpp"
-  }
+  },
+  "C_Cpp.errorSquiggles": "disabled"
 }

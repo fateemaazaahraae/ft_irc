@@ -47,5 +47,4 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
     } 
     else 
         chan->add_client(client);
-    send_to_client(client->get_client_fd(), "Welcome: you have been added to " + name + " channel\n");
 }

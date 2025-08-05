@@ -7,6 +7,12 @@ Channel::Channel(const Channel& other)
     name = other.name;
     my_clients = other.my_clients;
     operators = other.operators;
+    inv_only = false;
+    topic_res = false;
+    has_key = false;
+    has_mem_lim = false;
+    key = "";
+    mem_lim = 0;
 }
 
 const std::string& Channel::getTopic() const { return topic; }
@@ -20,7 +26,14 @@ const std::vector<int>& Channel::get_operators() const { return operators; }
 void Channel::add_client(Client* client)
 {
     if (!is_client_in_channel(client))
+    {
         my_clients.push_back(client);
+        std::string msg = "Welcome: you have been added to " + name + " channel\n";
+        send(client->get_client_fd(), msg.c_str() , msg.length(), 0);
+        return ;
+    }
+    std::string msg = "you're already a memebre of  " + name + " channel\n";
+    send(client->get_client_fd(), msg.c_str() , msg.length(), 0);
 }
 
 void Channel::add_operator(int fd)
@@ -77,4 +90,35 @@ void Channel::removeClient(int fd)
 void Channel::set_topic(const std::string& t)
 {
     topic = t;
+}
+void Channel::set_invite_only(bool var)
+{
+    inv_only = var;
+}
+void Channel::set_topic_restricted(bool var)
+{
+    topic_res = var;
+}
+void Channel::set_key(const std::string& key, bool var)
+{
+    has_key = var;
+    this->key = key;
+}
+void Channel::set_member_limit(int limit, bool var)
+{
+    has_mem_lim = var;
+    this->mem_lim = limit;
+}
+void Channel::remove_operator(int fd)
+{
+    size_t i = 0;
+    while (i < operators.size())
+    {
+        if (operators[i] == fd) 
+        {
+            operators.erase(operators.begin() + i);
+            return;
+        }
+        i++;
+    }
 }

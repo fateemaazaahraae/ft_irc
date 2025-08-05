@@ -100,3 +100,15 @@ bool Server::checkClientRegistration(Client* client)
     }
     return true;
 }
+
+Client* Server::find_client_by_nick(std::string nick)
+{
+    size_t i = 0;
+    while (i < myClients.size())
+    {
+        if (myClients[i]->get_client_nickname() == nick)
+            return myClients[i];
+        i++;
+    }
+    return NULL;
+}
