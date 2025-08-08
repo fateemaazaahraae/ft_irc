@@ -91,9 +91,10 @@ class Server
         void handle_mode_i(Channel* chan, bool add);
         void handle_mode_t(Channel* chan, bool add);
         void handle_mode_k(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
-        void handle_mode_l(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);;
-        void handle_mode_o(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);;
+        void handle_mode_l(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
+        void handle_mode_o(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
         void apply_channel_mode_flags(Client* client, Channel* chan, std::vector<std::string>& args);
+        void notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args);
         Client* find_client_by_nick(std::string nick);
 
 };

@@ -66,6 +66,16 @@ void Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::strin
         send_to_client(client->get_client_fd(), "there is no operator named : " + nick + "\n");
 }
 
+void Server::notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args)
+{
+    std::string notif = client->get_client_nickname() + " has applied these modifications " + args[2] + " to the " + chan->get_name() + " channel\n" ;
+
+    std::vector<Client*> members = chan->get_clients();
+    size_t i = -1;
+    while( ++i < members.size())
+        send_to_client(members[i]->get_client_fd(), notif );
+}
+
 
 void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector<std::string>& args)
 {
@@ -108,7 +118,7 @@ void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector
 
         ++i;
     }
-    //add the the notification part 
+    notify_channel_mode_change(client, chan, args);
 }
 
 
