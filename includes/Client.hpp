@@ -34,6 +34,7 @@ class Client
         std::string& get_client_username();
         std::string& get_client_realname();
         bool get_client_operator();
+        bool get_invitedChannels(Channel *channel) const;
 
     //======================= setters =======================
         void set_client_fd(int fd);

@@ -24,7 +24,7 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         return ;
     if (!checkClientRegistration(client))
         return ;
-    if (args.size() != 2)
+    if (args.size() < 2)
     {
         send_to_client(client->get_client_fd(),  "bad join argument -_-\n");
         return ;
@@ -36,6 +36,13 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         return ;
     }
     Channel* chan = findChannel(name);
+    if (chan->hasKey() )
+    if (!client->get_invitedChannels(chan))
+    {
+        send_to_client(client->get_client_fd(),  "You are not invited to this channel\n");
+        return ;
+    }
+
     if (chan == NULL) 
     {
         Channel new_channel(name);
