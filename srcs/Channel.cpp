@@ -122,3 +122,8 @@ void Channel::remove_operator(int fd)
         i++;
     }
 }
+
+bool Channel::hasTopicProtection() const
+{
+    return topic_res;
+}

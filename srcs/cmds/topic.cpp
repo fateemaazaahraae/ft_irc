@@ -42,17 +42,20 @@ void Server::changeTopic(Client* client, std::string channelName, std::string to
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
-    // if (channel->hasTopicProtection() && channel->is_operator_in_channel(client->get_client_fd()))
-    // {
-        channel->set_topic(topic);
-        replyCode = 332;
-        std::string rep = reply(client->get_client_nickname(), "Topic for " + channelName + " is now: " + topic);
-        sending_msg_in_chan(client, rep, channelName);
-        return ;
-    // }
-    // replyCode = 482;
-    // std::string rep = reply(client->get_client_nickname(), "You're not channel operator");
-    // send_to_client(client->get_client_fd(), rep);
+    if (channel->hasTopicProtection())
+    {
+        if (!channel->is_operator_in_channel(client->get_client_fd()))
+        {
+            replyCode = 482;
+            std::string rep = reply(client->get_client_nickname(), "You're not channel operator");
+            send_to_client(client->get_client_fd(), rep);
+            return ;
+        }
+    }
+    channel->set_topic(topic);
+    replyCode = 332;
+    std::string rep = reply(client->get_client_nickname(), "Topic for " + channelName + " is now: " + topic);
+    sending_msg_in_chan(client, rep, channelName);
 }
 
 void Server::handle_topic(Client* client, std::vector<std::string>& args)

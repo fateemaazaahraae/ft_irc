@@ -45,7 +45,6 @@ void Server::handle_invite(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
-    //! when ouiam completes mode command, we should check if the channel has invite-only mode
     targetClient->set_invitedChannels(channelName);
     replyCode = 341;
     std::string rep = reply(client->get_client_nickname(), "Invited you to " + channelName);

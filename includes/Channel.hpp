@@ -46,4 +46,10 @@ class Channel
         bool is_operator_in_channel(int fd) const;
         void removeClient(int fd);
         void remove_operator(int fd);
+        bool hasInviteOnly() const;
+        bool hasTopicProtection() const;
+        bool hasKey() const;
+        bool hasMemberLimit() const;
+        bool isKeyProtected() const;
+        bool isMemberLimitProtected() const;
     };

@@ -126,11 +126,8 @@ void Server::handle_mode(Client* client, std::vector<std::string>& args)
 {
     if (!checkClientAuthorization(client))
         return ;
-    if (!client->get_client_registered())
-    {
-        send_to_client(client->get_client_fd(), "You are not registered yet\n");
+    if (!checkClientRegistration(client))
         return ;
-    }
     if (args.size() < 3)
     {
         send_to_client(client->get_client_fd(),  "not enough parameters for mode -_-\n");
@@ -157,6 +154,4 @@ void Server::handle_mode(Client* client, std::vector<std::string>& args)
     //parse the flags
     //seting the new conf to the chan
     //send the notifs
-
-
 }

@@ -98,3 +98,8 @@ void Client::set_invitedChannels(std::string& channelName)
 }
 
 Client::~Client() {}
+
+// std::string Client::get_prefix() const
+// {
+//     return nickname + "!" + username + "@localhost";
+// }
