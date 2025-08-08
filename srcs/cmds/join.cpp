@@ -36,11 +36,22 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         return ;
     }
     Channel* chan = findChannel(name);
-    if (chan->hasKey() )
     if (!client->get_invitedChannels(chan))
     {
         send_to_client(client->get_client_fd(),  "You are not invited to this channel\n");
         return ;
+    }
+    if (chan->isKeyProtected())
+    {
+        if (!args[2])
+             send_to_client(client->get_client_fd(),  "please enter the password to join this channel\n");
+        if (chan->get_key_word() != arg[2])
+            send_to_client(client->get_client_fd(),  "incorrect password to join this channel\n");
+    }
+    if (chan->get_has_mem_lim())
+    {
+        if (chan->get_mem_lim() == chan->get_mem_nbr())
+            send_to_client(client->get_client_fd(),  "you can not join to this channel, the lim of member has been reached\n");
     }
 
     if (chan == NULL) 
