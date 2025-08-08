@@ -52,4 +52,8 @@ class Channel
         bool hasMemberLimit() const;
         bool isKeyProtected() const;
         bool isMemberLimitProtected() const;
+        bool get_has_mem_lim() const;
+        int get_mem_lim() const;
+        std::string get_key_word() const;
+        bool get_inv_only() const;
     };

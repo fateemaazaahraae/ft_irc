@@ -127,3 +127,28 @@ bool Channel::hasTopicProtection() const
 {
     return topic_res;
 }
+
+bool Channel::isKeyProtected() const
+{
+    return has_key;
+}
+
+bool Channel::get_has_mem_lim() const
+{
+    return has_mem_lim;
+}
+
+int Channel::get_mem_lim() const
+{
+    return mem_lim;
+}
+
+std::string Channel::get_key_word() const
+{
+    return key;
+}
+
+bool Channel::get_inv_only() const
+{
+    return inv_only;
+}
