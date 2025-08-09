@@ -19,6 +19,7 @@ void Server::handle_user(Client* client, std::vector<std::string> &args)
         return ;
     if (!checkDoubleClientRegistration(client))
         return ;
+
     if (args.size() < 5)
     {
         replyCode = 461;
@@ -26,11 +27,12 @@ void Server::handle_user(Client* client, std::vector<std::string> &args)
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
-    client->set_client_username(args[1]);
+    std::string username = trim(args[1]);
+    client->set_client_username(username);
     if (!isValidUsername(client->get_client_username()))
     {
         replyCode = 432;
-        std::string rep = reply(client->get_client_nickname(), args[1] + " :Erroneous username");
+        std::string rep = reply(client->get_client_nickname(), username + " :Erroneous username");
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
@@ -39,10 +41,11 @@ void Server::handle_user(Client* client, std::vector<std::string> &args)
         std::string realname = trim(args[4].substr(1));
         client->set_client_realname(realname);
     }
-
     if (client->get_client_realname().empty())
     {
-        send_to_client(client->get_client_fd(), "Realname is required\n");
+        replyCode = 461;
+        std::string rep = reply(client->get_client_nickname(), "USER :Realname is required");
+        send_to_client(client->get_client_fd(), rep);
         return ;
     }
     //* welcome message

@@ -7,6 +7,7 @@ Client::Client()
     nickname = "";
     username = "";
     realname = "";
+    hostname = "127.0.0.1";
     is_authorized = false;
     is_registered = false;
     // is_operator = false;
@@ -19,10 +20,10 @@ Client::Client(const Client& other)
     nickname = other.nickname;
     username = other.username;
     realname = other.realname;
+    hostname = other.hostname;
     clientAddr = other.clientAddr;
     is_authorized = other.is_authorized;
     is_registered = other.is_registered;
-    // is_operator = other.is_operator;
 }
 
 //======================== getters =======================
@@ -31,10 +32,7 @@ int Client::get_client_fd() const { return fd; }
 
 std::string &Client::get_client_buffer() { return buffer; }
 
-struct sockaddr_in& Client::get_client_addr() 
-{
-    return clientAddr;
-}
+struct sockaddr_in& Client::get_client_addr() { return clientAddr; }
 
 int Client::get_client_authe() { return is_authorized; }
 
@@ -45,8 +43,13 @@ std::string& Client::get_client_nickname() { return nickname; }
 std::string& Client::get_client_username() { return username; }
 
 std::string& Client::get_client_realname() { return realname; }
-// bool Client::get_client_operator() { return is_operator; }
 
+std::string Client::get_client_hostname() const { return hostname; }
+
+std::string Client::get_prefix() const
+{
+    return (nickname + "!" + username + "@" + hostname);
+}
 
 //======================= setters =======================
 
@@ -102,8 +105,3 @@ bool Client::get_invitedChannels(Channel *channel) const
 }
 
 Client::~Client() {}
-
-// std::string Client::get_prefix() const
-// {
-//     return nickname + "!" + username + "@localhost";
-// }

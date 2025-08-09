@@ -123,6 +123,11 @@ void Channel::remove_operator(int fd)
     }
 }
 
+bool Channel::hasInviteOnly() const
+{
+    return inv_only;
+}
+
 bool Channel::hasTopicProtection() const
 {
     return topic_res;

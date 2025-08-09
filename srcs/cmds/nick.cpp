@@ -26,8 +26,6 @@ void Server::handle_nick(Client* client, std::vector<std::string> &args)
 {
     if (!checkClientAuthorization(client))
         return ;
-    // if (!checkDoubleClientRegistration(client))
-    //     return ;
     if (args.size() < 2)
     {
         replyCode = 431;
@@ -35,23 +33,31 @@ void Server::handle_nick(Client* client, std::vector<std::string> &args)
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
-    if (isNickTaken(args[1]))
+    std::string newNick = args[1];
+    std::string oldNick = client->get_client_nickname();
+    if (isNickTaken(newNick))
     {
         replyCode = 433;
-        std::string rep = reply(client->get_client_nickname(), "Nickname is already in use");
+        std::string rep = reply(client->get_client_nickname(), newNick + " :Nickname is already in use");
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
-    if (isValidNickName(args[1]))
-    {
-        client->set_client_nickname(args[1]);
-        std::cout << "Client set nickname" << std::endl;
-    }
-    else
+    if (!isValidNickName(newNick))
     {
         replyCode = 432;
-        std::string rep = reply(args[1], "Bad nickname");
+        std::string rep = reply(newNick, newNick + " :Erroneous nickname");
         send_to_client(client->get_client_fd(), rep);
+        return ;
+    }
+    client->set_client_nickname(newNick);
+    if (!oldNick.empty() && oldNick != newNick)
+    {
+        std::string nickChangeMsg = ":" + client->get_prefix() + " NICK :" + newNick + "\r\n";
+        for (size_t i = 0; i < myClients.size(); i++)
+        {
+            if (myClients[i] != client)
+                send_to_client(myClients[i]->get_client_fd(), nickChangeMsg);
+        }
     }
     //* welcome message
     if (!client->get_client_nickname().empty() && !client->get_client_username().empty() && !client->get_client_realname().empty())

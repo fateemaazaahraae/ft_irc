@@ -14,6 +14,7 @@ class Client
         std::string nickname;
         std::string username;
         std::string realname;
+        std::string hostname;
         struct sockaddr_in clientAddr;
         bool    is_authorized;
         bool    is_registered;
@@ -33,8 +34,10 @@ class Client
         std::string& get_client_nickname();
         std::string& get_client_username();
         std::string& get_client_realname();
+        std::string get_client_hostname() const;
         bool get_client_operator();
         bool get_invitedChannels(Channel *channel) const;
+        std::string get_prefix() const;
 
     //======================= setters =======================
         void set_client_fd(int fd);

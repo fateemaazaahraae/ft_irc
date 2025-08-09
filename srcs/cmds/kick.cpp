@@ -10,62 +10,63 @@ Client* Server::getClient(std::string nickname)
     return NULL;
 }
 
+#include "../../includes/Server.hpp"
+
 void Server::handle_kick(Client* client, std::vector<std::string>& args)
 {
     if (!checkClientAuthorization(client))
-        return ;
+        return;
     if (!checkClientRegistration(client))
-        return ;
-    if (args.size() < 3) //! Check if there are enough arguments
+        return;
+
+    if (args.size() < 3)
     {
         replyCode = 461;
-        std::string rep = reply(client->get_client_nickname(), "Not enough parameters");
-        send_to_client(client->get_client_fd(), rep);
-        return ;
+        send_to_client(client->get_client_fd(),
+            reply(client->get_client_nickname(), args[0] + " :Not enough parameters"));
+        return;
     }
+
     std::string channelName = args[1];
     std::string targetNickname = args[2];
-    std::string reason = "";
-    if (args.size() > 3) //! Check if the reason is provided
-    if (!args[3].empty())
-    reason = trim(args[3].substr(1));
+    std::string reason = (args.size() > 3 && !args[3].empty())
+                         ? trim(args[3].substr(1))
+                         : "No reason given";
     Channel* channel = findChannel(channelName);
-    if (!channel) //! Check if the channel exists
+    if (!channel)
     {
         replyCode = 403;
-        std::string rep = reply(client->get_client_nickname(), "No such channel");
-        send_to_client(client->get_client_fd(), rep);
-        return ;
+        send_to_client(client->get_client_fd(),
+            reply(client->get_client_nickname(), channelName + " :No such channel"));
+        return;
     }
-    if (!channel->is_operator_in_channel(client->get_client_fd())) //! Check if the client is an operator in the channel
+
+    if (!channel->is_operator_in_channel(client->get_client_fd()))
     {
         replyCode = 482;
-        std::string rep = reply(client->get_client_nickname(), "You're not channel operator");
-        send_to_client(client->get_client_fd(), rep);
-        return ;
+        send_to_client(client->get_client_fd(),
+            reply(client->get_client_nickname(), channelName + " :You're not channel operator"));
+        return;
     }
+
     Client* targetClient = getClient(targetNickname);
-    if (!targetClient) //! Check if the target client exists
+    if (!targetClient)
     {
         replyCode = 401;
-        std::string rep = reply(client->get_client_nickname(), "No such user with that nickname");
-        send_to_client(client->get_client_fd(), rep);
-        return ;
+        send_to_client(client->get_client_fd(),
+            reply(client->get_client_nickname(), targetNickname + " :No such nick/channel"));
+        return;
     }
-    if (!channel->is_client_in_channel(targetClient)) //! Check if the target is a client in the channel
+
+    if (!channel->is_client_in_channel(targetClient))
     {
         replyCode = 442;
-        std::string rep = reply(client->get_client_nickname(), "User not on channel");
-        send_to_client(client->get_client_fd(), rep);
-        return ;
+        send_to_client(client->get_client_fd(),
+            reply(client->get_client_nickname(), channelName + " :User is not on that channel"));
+        return;
     }
-    channel->removeClient(targetClient->get_client_fd()); //! Remove the target client from the channel
-    std::string kickMessage = ":" + client->get_client_nickname() + " KICK " + channelName + " " + targetClient->get_client_nickname();
-    if (!reason.empty())
-        kickMessage += " :" + reason;
-    else
-        kickMessage += " :No reason provided";
-    sending_msg_in_chan(client, kickMessage, channelName); //! Notify the channel about the kick
-    std::string rep = reply(targetClient->get_client_nickname(), "You have been kicked from " + channelName);
-    send_to_client(targetClient->get_client_fd(), rep);
+    channel->removeClient(targetClient->get_client_fd());
+    std::string kickMsg = ":" + client->get_prefix() + " KICK " + channelName + " " +
+                          targetClient->get_client_nickname() + " :" + reason + "\r\n";
+    sending_msg_in_chan(client, kickMsg, channelName);
 }
