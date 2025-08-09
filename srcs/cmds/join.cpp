@@ -35,27 +35,7 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(),  name + " : invalid channel name\n");
         return ;
     }
-    Channel* chan = findChannel(name);
-    std::cout<< "line 39\n";    
-    if (chan && chan->get_inv_only() && !client->get_invitedChannels(chan))
-    {
-        send_to_client(client->get_client_fd(),  "You are not invited to this channel\n");
-        return ;
-    }
-    std::cout<< "line 45\n";
-    if (chan->isKeyProtected())
-    {
-        if (args[2] == "")
-             send_to_client(client->get_client_fd(),  "please enter the password to join this channel\n");
-        if (chan->get_key_word() != args[2])
-            send_to_client(client->get_client_fd(),  "incorrect password to join this channel\n");
-    }
-    if (chan->get_has_mem_lim())
-    {
-        if (chan->get_mem_lim() == (int)chan->get_clients().size())
-            send_to_client(client->get_client_fd(),  "you can not join to this channel, the lim of member has been reached\n");
-    }
-
+    Channel* chan = findChannel(name); 
     if (chan == NULL) 
     {
         Channel new_channel(name);
@@ -64,7 +44,33 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         my_channels.push_back(new Channel(new_channel));
         std::cout << "channel " << name << ": has been created successfully !\n";
         chan = my_channels.back();
-    } 
-    else 
+        return;
+    }
+        if (chan->get_inv_only() && !client->get_invitedChannels(chan))
+        {
+            send_to_client(client->get_client_fd(),  "You are not invited to this channel\n");
+            return ;
+        }
+        if (chan->isKeyProtected())
+        {
+            if (args[2] == "")
+            {
+                send_to_client(client->get_client_fd(),  "please enter the password to join this channel\n");
+                return ;
+            }
+            if (chan->get_key_word() != args[2])
+            {
+                send_to_client(client->get_client_fd(),  "incorrect password to join this channel\n");
+                return ;
+            }
+        }
+        if (chan->get_has_mem_lim())
+        {
+            if (chan->get_mem_lim() == (int)chan->get_clients().size())
+            {
+                send_to_client(client->get_client_fd(),  "you can not join to this channel, the lim of member has been reached\n");
+                return ;
+            }
+        }
         chan->add_client(client);
 }

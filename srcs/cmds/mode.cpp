@@ -72,7 +72,7 @@ void Server::notify_channel_mode_change(Client* client, Channel* chan, const std
 
     std::vector<Client*> members = chan->get_clients();
     size_t i = -1;
-    while( ++i < members.size())
+    while(++i < members.size())
         send_to_client(members[i]->get_client_fd(), notif );
 }
 
