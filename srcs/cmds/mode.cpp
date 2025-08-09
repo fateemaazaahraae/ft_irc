@@ -151,7 +151,4 @@ void Server::handle_mode(Client* client, std::vector<std::string>& args)
         return;
     }
     apply_channel_mode_flags(client, chan, args);
-    //parse the flags
-    //seting the new conf to the chan
-    //send the notifs
 }

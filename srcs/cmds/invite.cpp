@@ -22,8 +22,7 @@ void Server::handle_invite(Client* client, std::vector<std::string>& args)
     if (!targetClient)
     {
         replyCode = 401;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), targetNick + " :No such nick/channel"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), targetNick + " :No such nick/channel"));
         return;
     }
 
@@ -31,37 +30,33 @@ void Server::handle_invite(Client* client, std::vector<std::string>& args)
     if (!channel)
     {
         replyCode = 403;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), channelName + " :No such channel"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :No such channel"));
         return;
     }
 
     if (!channel->is_client_in_channel(client))
     {
         replyCode = 442;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), channelName + " :You're not on that channel"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :You're not on that channel"));
         return;
     }
 
     if (channel->hasInviteOnly() && !channel->is_operator_in_channel(client->get_client_fd()))
     {
         replyCode = 482;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), channelName + " :You're not channel operator"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :You're not channel operator"));
         return;
     }
 
     if (channel->is_client_in_channel(targetClient))
     {
         replyCode = 443;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), targetNick + " " + channelName + " :is already on channel"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), targetNick + " " + channelName + " :is already on channel"));
         return;
     }
     targetClient->set_invitedChannels(channelName);
     replyCode = 341;
-    send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), targetNick + " " + channelName));
+    // send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), targetNick + " " + channelName));
     std::string inviteMsg = ":" + client->get_prefix() + " INVITE " + targetNick + " :" + channelName + "\r\n";
     send_to_client(targetClient->get_client_fd(), inviteMsg);
 }

@@ -22,8 +22,7 @@ void Server::handle_kick(Client* client, std::vector<std::string>& args)
     if (args.size() < 3)
     {
         replyCode = 461;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), args[0] + " :Not enough parameters"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), args[0] + " :Not enough parameters"));
         return;
     }
 
@@ -36,16 +35,19 @@ void Server::handle_kick(Client* client, std::vector<std::string>& args)
     if (!channel)
     {
         replyCode = 403;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), channelName + " :No such channel"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :No such channel"));
         return;
     }
-
+    if (!channel->is_client_in_channel(client))
+    {
+        replyCode = 442;
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :You're not on that channel"));
+        return;
+    }
     if (!channel->is_operator_in_channel(client->get_client_fd()))
     {
         replyCode = 482;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), channelName + " :You're not channel operator"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :You're not channel operator"));
         return;
     }
 
@@ -53,20 +55,17 @@ void Server::handle_kick(Client* client, std::vector<std::string>& args)
     if (!targetClient)
     {
         replyCode = 401;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), targetNickname + " :No such nick/channel"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), targetNickname + " :No such nick/channel"));
         return;
     }
 
     if (!channel->is_client_in_channel(targetClient))
     {
         replyCode = 442;
-        send_to_client(client->get_client_fd(),
-            reply(client->get_client_nickname(), channelName + " :User is not on that channel"));
+        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :User is not on that channel"));
         return;
     }
     channel->removeClient(targetClient->get_client_fd());
-    std::string kickMsg = ":" + client->get_prefix() + " KICK " + channelName + " " +
-                          targetClient->get_client_nickname() + " :" + reason + "\r\n";
+    std::string kickMsg = ":" + client->get_prefix() + " KICK " + channelName + " " + targetClient->get_client_nickname() + " :" + reason + "\r\n";
     sending_msg_in_chan(client, kickMsg, channelName);
 }

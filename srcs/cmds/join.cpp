@@ -29,7 +29,7 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         return ;
     if (args.size() < 2)
     {
-        replyCode = 461; // ERR_NEEDMOREPARAMS
+        replyCode = 461;
         send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), "JOIN :Not enough parameters"));
         return;
     }

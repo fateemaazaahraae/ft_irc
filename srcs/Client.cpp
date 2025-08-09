@@ -99,6 +99,7 @@ void Client::set_invitedChannels(std::string& channelName)
 {
     this->invitedChannels.push_back(channelName);
 }
+
 bool Client::get_invitedChannels(Channel *channel) const
 {
     return std::find(invitedChannels.begin(), invitedChannels.end(), channel->get_name()) != invitedChannels.end();
