@@ -28,6 +28,10 @@ class Channel
         const std::vector<Client*>& get_clients() const;
         const std::vector<int>& get_operators() const;
         const std::string& getTopic() const;
+        bool get_has_mem_lim() const;
+        int get_mem_lim() const;
+        std::string get_key_word() const;
+        bool get_inv_only() const;
 
         //================setters======================
         void set_topic(const std::string& topic);
@@ -52,8 +56,4 @@ class Channel
         bool hasMemberLimit() const;
         bool isKeyProtected() const;
         bool isMemberLimitProtected() const;
-        bool get_has_mem_lim() const;
-        int get_mem_lim() const;
-        std::string get_key_word() const;
-        bool get_inv_only() const;
     };

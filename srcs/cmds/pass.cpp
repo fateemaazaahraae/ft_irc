@@ -12,7 +12,7 @@ void Server::handle_pass(Client* client, std::vector<std::string> &args)
     if (args.size() < 2)
     {
         replyCode = 461;
-        std::string rep = reply(client->get_client_nickname(), "Not enough parameters");
+        std::string rep = reply(client->get_client_nickname(), "PASS: Not enough parameters");
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
