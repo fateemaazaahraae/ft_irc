@@ -38,6 +38,13 @@ void Server::handle_invite(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(), rep);
         return ;
     }
+    if (channel->hasInviteOnly() && !channel->is_operator_in_channel(client->get_client_fd()))
+    {
+        replyCode = 482;
+        std::string rep = reply(client->get_client_nickname(), (channel->get_name() + " :You're not channel operator"));
+        send_to_client(client->get_client_fd(), rep);
+        return ;
+    }
     if (channel->is_client_in_channel(targetClient))
     {
         replyCode = 443;

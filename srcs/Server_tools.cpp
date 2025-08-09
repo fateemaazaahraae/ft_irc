@@ -32,11 +32,13 @@ std::string &Server::convertCmdToUpperCase(std::string &str)
 
 std::string Server::reply(std::string target, const std::string& message)
 {
-    std::ostringstream reply;
     if (target.empty())
         target = "*";
-    reply << ":" << serverName << " " << std::setfill('0') << std::setw(3) << replyCode << " " << target << " :" << message << "\n";
-    return reply.str();
+    std::ostringstream rep;
+    rep << ":" << serverName << " " 
+        << std::setw(3) << std::setfill('0') << replyCode 
+        << " " << target << " " << message << "\r\n";
+    return rep.str();
 }
 
 void Server::welcomeClient(Client* client)
