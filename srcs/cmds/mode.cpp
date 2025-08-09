@@ -68,12 +68,32 @@ void Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::strin
 
 void Server::notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args)
 {
-    std::string notif = client->get_client_nickname() + " has applied these modifications " + args[2] + " to the " + chan->get_name() + " channel\n" ;
+    std::string prif = client->get_prefix();
 
-    std::vector<Client*> members = chan->get_clients();
-    size_t i = -1;
-    while( ++i < members.size())
-        send_to_client(members[i]->get_client_fd(), notif );
+
+    std::string param;
+    size_t i = 3;
+    while( i < args.size())
+    {
+        param += " " + args[i];
+        i++;
+    }
+
+    std::string notif = prif + " MODE " + chan->get_name() + " " + args[2] + param + "\r\n";
+
+    std::vector<Client *> mem = chan->get_clients();
+    i = 0;
+    while( i  < mem.size())
+    {
+        send_to_client(mem[i]->get_client_fd(), notif);
+        i++;
+    }
+    //" has applied these modifications " + args[2] + " to the " + chan->get_name() + " channel\n" ;
+
+    // std::vector<Client*> members = chan->get_clients();
+    // size_t i = -1;
+    // while(++i < members.size())
+    //     send_to_client(members[i]->get_client_fd(), notif );
 }
 
 
