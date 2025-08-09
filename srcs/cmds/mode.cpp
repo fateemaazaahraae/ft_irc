@@ -150,28 +150,26 @@ void Server::handle_mode(Client* client, std::vector<std::string>& args)
         return ;
     if (args.size() < 3)
     {
-        send_to_client(client->get_client_fd(),  "not enough parameters for mode -_-\n");
+        if (args.size() == 2)
+            return ;
+        send_to_client(client->get_client_fd(),":" + serverName + " 461 " + client->get_client_nickname() + " MODE :Not enough parameters\r\n");        
         return ;
     }
     std::string name = args[1];
     if (name.empty() || name[0] != '#')
     {
-        send_to_client(client->get_client_fd(),  name + " : is invalid channel name\n");
+        send_to_client(client->get_client_fd(), ":" + serverName + " 403 " + client->get_client_nickname() + " " + name + " :No such channel\r\n");
         return ;
     }
     Channel* chan = findChannel(name);
     if (!chan || !chan->is_client_in_channel(client))
     {
-        send_to_client(client->get_client_fd(), "you are not a member of a channel named: " + name + "\n");
+        send_to_client(client->get_client_fd(),  ":" + serverName + " 442 " + client->get_client_nickname() + " " + name + " :You're not on that channel\r\n");
         return;
     }
     if (!chan->is_operator_in_channel(client->get_client_fd()))
     {
-        send_to_client(client->get_client_fd(), "you are not an operator of a channel named: " + name + "\n");
-        return;
+         send_to_client(client->get_client_fd(), ":" + serverName + " 482 " + client->get_client_nickname() + " " + name + " :You're not channel operator\r\n");
     }
     apply_channel_mode_flags(client, chan, args);
-    //parse the flags
-    //seting the new conf to the chan
-    //send the notifs
 }
