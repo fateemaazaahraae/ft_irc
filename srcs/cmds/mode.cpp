@@ -1,6 +1,5 @@
 # include "../../includes/Server.hpp"
 
-
 void Server::handle_mode_i(Channel* chan, bool add)
 {
         chan->set_invite_only(add);   
@@ -17,7 +16,9 @@ void Server::handle_mode_k(Client* client, Channel* chan, std::vector<std::strin
     {
         if (index >= (int)args.size())
         {
-            send_to_client(client->get_client_fd(), "MODE +k requires a key\n");
+            replyCode = 461;
+            std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Key required for +k mode");
+            send_to_client(client->get_client_fd(), msg);
             return;
         }
         chan->set_key(args[index++], add);
@@ -32,10 +33,19 @@ void Server::handle_mode_l(Client* client, Channel* chan, std::vector<std::strin
     {
         if (index >= (int)args.size())
         {
-            send_to_client(client->get_client_fd(), "MODE +l requires a limit\n");
+            replyCode = 461;
+            std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Limit required for +l mode");
+            send_to_client(client->get_client_fd(), msg);
             return;
         }
         int limit = std::atoi(args[index++].c_str());
+        if (limit <= 0)
+        {
+            replyCode = 461;
+            std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Invalid limit for +l mode");
+            send_to_client(client->get_client_fd(), msg);
+            return;
+        }
         chan->set_member_limit(limit, add);
     }
     else
@@ -46,7 +56,9 @@ void Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::strin
 {
     if (index >= (int)args.size())
     {
-        send_to_client(client->get_client_fd(), "MODE +o/-o requires a nickname\n");
+        replyCode = 461;
+        std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Nickname required for +o/-o mode");
+        send_to_client(client->get_client_fd(), msg);
         return;
     }
 
@@ -54,7 +66,9 @@ void Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::strin
     Client* target = find_client_by_nick(nick);
     if (!target || !chan->is_client_in_channel(target))
     {
-        send_to_client(client->get_client_fd(), "there is no member named : " + nick + "\n");
+        replyCode = 441;
+        std::string msg = reply(client->get_client_nickname(), nick + " :They aren't on that channel");
+        send_to_client(client->get_client_fd(), msg);
         return;
     }
 
@@ -63,37 +77,31 @@ void Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::strin
     else if (!add && chan->is_operator_in_channel(target->get_client_fd()))
         chan->remove_operator(target->get_client_fd());
     else if (!add)
-        send_to_client(client->get_client_fd(), "there is no operator named : " + nick + "\n");
+    {
+        replyCode = 482;
+        std::string msg = reply(client->get_client_nickname(), nick + " :is not a channel operator");
+        send_to_client(client->get_client_fd(), msg);
+        return;
+    }
 }
 
 void Server::notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args)
 {
-    std::string prif = client->get_prefix();
-
-
-    std::string param;
+    std::string param = "";
     size_t i = 3;
     while( i < args.size())
     {
         param += " " + args[i];
         i++;
     }
-
-    std::string notif = prif + " MODE " + chan->get_name() + " " + args[2] + param + "\r\n";
-
+    std::string notif = ":" + client->get_prefix() + " MODE " + chan->get_name() + " " + args[2] + param + "\r\n";
     std::vector<Client *> mem = chan->get_clients();
     i = 0;
-    while( i  < mem.size())
+    while(i  < mem.size())
     {
         send_to_client(mem[i]->get_client_fd(), notif);
         i++;
     }
-    //" has applied these modifications " + args[2] + " to the " + chan->get_name() + " channel\n" ;
-
-    // std::vector<Client*> members = chan->get_clients();
-    // size_t i = -1;
-    // while(++i < members.size())
-    //     send_to_client(members[i]->get_client_fd(), notif );
 }
 
 
@@ -132,10 +140,14 @@ void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector
             handle_mode_o(client, chan, args, add, index);
         else
         {
-            send_to_client(client->get_client_fd(), std::string("Unknown mode: ") + flag + "\n");
+            replyCode = 472;
+            std::ostringstream oss;
+            oss << ":" << serverName << " 472 "
+                << client->get_client_nickname() << " "
+                << flag << " :is unknown mode char to me\r\n";
+            send_to_client(client->get_client_fd(), oss.str());
             return;
         }
-
         ++i;
     }
     notify_channel_mode_change(client, chan, args);
@@ -152,24 +164,40 @@ void Server::handle_mode(Client* client, std::vector<std::string>& args)
     {
         if (args.size() == 2)
             return ;
-        send_to_client(client->get_client_fd(),":" + serverName + " 461 " + client->get_client_nickname() + " MODE :Not enough parameters\r\n");        
+        replyCode = 461;
+        std::string rep = reply(client->get_client_nickname(), "MODE :Not enough parameters");
+        send_to_client(client->get_client_fd(), rep);
         return ;
     }
     std::string name = args[1];
     if (name.empty() || name[0] != '#')
     {
-        send_to_client(client->get_client_fd(), ":" + serverName + " 403 " + client->get_client_nickname() + " " + name + " :No such channel\r\n");
+        replyCode = 403;
+        std::string rep = reply(client->get_client_nickname(), "MODE " + name + " :No such channel");
+        send_to_client(client->get_client_fd(), rep);
         return ;
     }
     Channel* chan = findChannel(name);
-    if (!chan || !chan->is_client_in_channel(client))
+    if (!chan)
     {
-        send_to_client(client->get_client_fd(),  ":" + serverName + " 442 " + client->get_client_nickname() + " " + name + " :You're not on that channel\r\n");
+        replyCode = 403;
+        std::string rep = reply(client->get_client_nickname(), "MODE " + name + " :No such channel");
+        send_to_client(client->get_client_fd(), rep);
+        return ;
+    }
+    if (!chan->is_client_in_channel(client))
+    {
+        replyCode = 442;
+        std::string rep = reply(client->get_client_nickname(), "MODE " + name + " :You're not on that channel");
+        send_to_client(client->get_client_fd(), rep);
         return;
     }
     if (!chan->is_operator_in_channel(client->get_client_fd()))
     {
-         send_to_client(client->get_client_fd(), ":" + serverName + " 482 " + client->get_client_nickname() + " " + name + " :You're not channel operator\r\n");
+        replyCode = 482;
+        std::string rep = reply(client->get_client_nickname(), "MODE " + name + " :You're not channel operator");
+        send_to_client(client->get_client_fd(), rep);
+        return;
     }
     apply_channel_mode_flags(client, chan, args);
 }

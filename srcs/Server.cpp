@@ -81,7 +81,7 @@ void Server::removeClient(int clientFd)
             it = myClients.erase(it);
         }
         else
-            ++it;
+        ++it;
     }
 }
 
@@ -162,10 +162,6 @@ std::vector<std::string> Server::get_arg(std::string cmd)
             break;
         if (cmd[i] == ':')
         {
-            // while (i < cmd.size() && cmd[i] == ':')
-            //     i++;
-            // while (i < cmd.size() && (cmd[i] == ' ' || cmd[i] == '\t'))
-            //     i++;
             if (i < cmd.size())
                 args.push_back(cmd.substr(i));
             break;
@@ -216,7 +212,10 @@ void Server::executeCommand(Client *client, std::vector<std::string> &args)
     else if (args[0] == "INVITE")
         handle_invite(client, args);
     else if (args[0] == "MODE")
-        handle_mode(client, args);  
+        handle_mode(client, args);
+    else if (args[0] == "CAP" || args[0] == "PING"
+			|| args[0] == "PONG" || args[0] == "WHO" || args[0] == "QUIT")
+		return ; 
     else
         send_to_client(client->get_client_fd(), "Unknown command\n");
 }
@@ -248,6 +247,10 @@ void Server::clean_up()
     }
     my_channels.clear();
     close(fd);
+}
+
+void Server::setReplyCode(int code){
+    replyCode = code;
 }
 
 Server::~Server(){}

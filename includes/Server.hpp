@@ -87,6 +87,8 @@ class Server
         void displayTopic(Client* client, std::string channelName);
         void changeTopic(Client* client, std::string channelName, std::string topic);
         void handle_invite(Client* client, std::vector<std::string>& args);
+        void setReplyCode(int code);
+        void broadcastMessage(Channel* channel, std::string& message);
 
         void handle_mode_i(Channel* chan, bool add);
         void handle_mode_t(Channel* chan, bool add);

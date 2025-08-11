@@ -41,27 +41,29 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         return ;
     }
     Channel* chan = findChannel(name);
-    if (chan == NULL) 
+    if (chan == NULL)
     {
-        Channel new_channel(name);
-        new_channel.add_client(client);
-        new_channel.add_operator(client->get_client_fd());
-        my_channels.push_back(new Channel(new_channel));
-        send_to_client(client->get_client_fd(), ":" + client->get_prefix() + " JOIN :" + name);
-        return ;
-    }    
-    if (chan->get_inv_only() && !client->get_invitedChannels(chan))
+        Channel* new_channel = new Channel(name);
+        new_channel->add_client(client, this);
+        new_channel->add_operator(client->get_client_fd());
+        my_channels.push_back(new_channel);
+        return;
+    }
+    if (chan->get_inv_only())
     {
-        replyCode = 473;
-        send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), name + " :Cannot join channel (+i)"));
-        return ;
+        if (!client->get_invitedChannels(chan))
+        {
+            replyCode = 473;
+            send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), name + " :Cannot join channel (+i) - invite only"));
+            return ;
+        }
     }
     if (chan->isKeyProtected())
     {
         if (args.size() != 3)
         {
             replyCode = 475;
-            send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), name + " :Cannot join channel (+k)"));
+            send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), name + " :Cannot join channel (+k) - key required"));
             return ;
         }
         if (chan->get_key_word() != args[2])
@@ -77,6 +79,6 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), name + " :Cannot join channel (+l) - channel is full"));
         return ;
     }
-    chan->add_client(client);
+    chan->add_client(client, this);
     send_to_client(client->get_client_fd(), ":" + client->get_prefix() + " JOIN :" + name);
 }

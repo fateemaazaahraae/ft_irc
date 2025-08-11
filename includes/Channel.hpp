@@ -42,7 +42,7 @@ class Channel
         
         
         //================methods======================
-        void add_client(Client* client);
+        void add_client(Client* client, Server* server);
         void add_operator(int fd);
         bool is_client_in_channel(Client* client) const;
         

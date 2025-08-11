@@ -114,3 +114,9 @@ Client* Server::find_client_by_nick(std::string nick)
     }
     return NULL;
 }
+
+void Server::broadcastMessage(Channel* channel, std::string& message)
+{
+    for (size_t i = 0; i < channel->get_clients().size(); i++)
+        send_to_client(channel->get_clients()[i]->get_client_fd(), message);
+}

@@ -4,7 +4,7 @@ bool Server::isValidUsername(std::string& username)
 {
     if (username.empty())
         return false;
-    for (size_t i = 0; i < username.length(); ++i)
+    for (size_t i = 0; i < username.length(); i++)
     {
         char c = username[i];
         if (!isalnum(c) && c != '-' && c != '_' && c != '.')

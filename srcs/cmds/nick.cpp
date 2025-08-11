@@ -16,7 +16,7 @@ int Server::isValidNickName(std::string str)
         return 0;
     for (size_t i = 0; i < str.size(); i++)
     {
-        if (!isalpha(str[i]) && !isalnum(str[i]))
+        if (!isalpha(str[i]) && !isalnum(str[i]) && str[i] != '-' && str[i] != '_')
             return 0;
     }
     return 1;

@@ -1,6 +1,15 @@
 # include "../includes/Channel.hpp"
 
-Channel::Channel(const std::string& n): name(n){}
+Channel::Channel(const std::string& n)
+{
+    name = n;
+    inv_only = false;
+    topic_res = false;
+    has_key = false;
+    has_mem_lim = false;
+    key = "";
+    mem_lim = 0;
+}
 
 Channel::Channel(const Channel& other)
 {
@@ -23,17 +32,18 @@ const std::vector<Client*>& Channel::get_clients() const { return my_clients; }
 
 const std::vector<int>& Channel::get_operators() const { return operators; }
 
-void Channel::add_client(Client* client)
+void Channel::add_client(Client* client, Server* server)
 {
-    if (!is_client_in_channel(client))
+    if (is_client_in_channel(client))
     {
-        my_clients.push_back(client);
-        std::string msg = "Welcome: you have been added to " + name + " channel\n";
-        send(client->get_client_fd(), msg.c_str() , msg.length(), 0);
-        return ;
+        server->setReplyCode(443);
+        std::string rep = server->reply(client->get_client_nickname(), ": You are already in this channel");
+        return;
     }
-    std::string msg = "you're already a memebre of  " + name + " channel\n";
-    send(client->get_client_fd(), msg.c_str() , msg.length(), 0);
+    my_clients.push_back(client);
+    std::string joinMsg = ":" + client->get_prefix() + " JOIN :" + name;
+    for (size_t i = 0; i < my_clients.size(); ++i)
+        server->send_to_client(my_clients[i]->get_client_fd(), joinMsg);
 }
 
 void Channel::add_operator(int fd)
@@ -81,7 +91,17 @@ void Channel::removeClient(int fd)
         if (my_clients[i]->get_client_fd() == fd)
         {
             my_clients.erase(my_clients.begin() + i);
-            return;
+            break;
+        }
+        i++;
+    }
+    i = 0;
+    while (i < operators.size())
+    {
+        if (operators[i] == fd)
+        {
+            operators.erase(operators.begin() + i);
+            break;
         }
         i++;
     }

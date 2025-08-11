@@ -48,8 +48,9 @@ void Server::changeTopic(Client* client, std::string channelName, std::string to
         return;
     }
     channel->set_topic(topic);
+    std::cout << "tttt-> " << topic << std::endl;
     std::string topicChangeMsg = ":" + client->get_prefix() + " TOPIC " + channelName + " :" + topic + "\r\n";
-    sending_msg_in_chan(client, topicChangeMsg, channelName);
+    broadcastMessage(channel, topicChangeMsg);
 }
 
 void Server::handle_topic(Client* client, std::vector<std::string>& args)
