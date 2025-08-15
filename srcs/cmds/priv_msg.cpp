@@ -2,8 +2,6 @@
 
 void Server::bot_check_message(Channel* chan, const std::string& msg)
 {
-    std::cout << "hiii";
-
     std::string reply;
 
     if (msg == "!happy")
@@ -18,14 +16,14 @@ void Server::bot_check_message(Channel* chan, const std::string& msg)
         reply = ":" + bot->get_client_nickname() +
                 "!" + bot->get_client_username() +
                 "@server PRIVMSG " + chan->get_name() +
-                "{ قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ } \r\n";
+                " { قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَى أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ } 🤍\r\n";
     }
     else if (msg == "!time")
     {
         time_t now = time(0);
         char buffer[80];
         strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&now));
-
+        
         reply = ":" + bot->get_client_nickname() +
                 "!" + bot->get_client_username() +
                 "@server PRIVMSG " + chan->get_name() +
@@ -57,14 +55,11 @@ void Server::bot_check_message(Channel* chan, const std::string& msg)
         reply = ":" + bot->get_client_nickname() +
                 "!" + bot->get_client_username() +
                 "@server PRIVMSG " + chan->get_name() +
-                " { وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ ۚ وَاللَّهُ بِمَا تَعْمَلُونَ بَصِيرٌ } 🤍\r\n";
+                " { وَاصْبِرْ لِحُكْمِ رَبِّكَ فَإِنَّكَ بِأَعْيُنِنَا وَسَبِّحْ بِحَمْدِ رَبِّكَ حِينَ تَقُومُ } 🤍\r\n";
     }
-
     if (!reply.empty())
         broadcastMessage(chan, reply);
 }
-
-
 
 void Server::sending_msg_in_chan(Client* client, std::string message, std::string target)
 {

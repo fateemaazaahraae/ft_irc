@@ -107,5 +107,16 @@ bool Client::get_invitedChannels(Channel *channel) const
     return std::find(invitedChannels.begin(), invitedChannels.end(), channel->get_name()) != invitedChannels.end();
 }
 
+void Client::removeInvitedChannel(std::string &channel)
+{
+    for (size_t i = 0; i < invitedChannels.size(); i++)
+    {
+        if (invitedChannels[i] == channel)
+        {
+            invitedChannels.erase(invitedChannels.begin() + i);
+            break;
+        }
+    }
+}
 
 Client::~Client() {}

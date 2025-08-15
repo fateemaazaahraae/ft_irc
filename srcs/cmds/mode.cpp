@@ -10,7 +10,7 @@ void Server::handle_mode_t(Channel* chan, bool add)
         chan->set_topic_restricted(add);
 }
 
-void Server::handle_mode_k(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int &index)
+int Server::handle_mode_k(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int &index)
 {
     if (add)
     {
@@ -19,15 +19,16 @@ void Server::handle_mode_k(Client* client, Channel* chan, std::vector<std::strin
             replyCode = 461;
             std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Key required for +k mode");
             send_to_client(client->get_client_fd(), msg);
-            return;
+            return 0;
         }
         chan->set_key(args[index++], add);
     }
     else
         chan->set_key("", add);
+    return 1;
 }
 
-void Server::handle_mode_l(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int &index)
+int Server::handle_mode_l(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int &index)
 {
     if (add)
     {
@@ -36,7 +37,7 @@ void Server::handle_mode_l(Client* client, Channel* chan, std::vector<std::strin
             replyCode = 461;
             std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Limit required for +l mode");
             send_to_client(client->get_client_fd(), msg);
-            return;
+            return 0;
         }
         int limit = std::atoi(args[index++].c_str());
         if (limit <= 0)
@@ -44,32 +45,34 @@ void Server::handle_mode_l(Client* client, Channel* chan, std::vector<std::strin
             replyCode = 461;
             std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Invalid limit for +l mode");
             send_to_client(client->get_client_fd(), msg);
-            return;
+            return 0;
         }
         chan->set_member_limit(limit, add);
     }
     else
         chan->set_member_limit(0, add);
+    return 1;
 }
 
-void Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int &index)
+int Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int &index)
 {
     if (index >= (int)args.size())
     {
         replyCode = 461;
         std::string msg = reply(client->get_client_nickname(), "MODE " + chan->get_name() + " :Nickname required for +o/-o mode");
         send_to_client(client->get_client_fd(), msg);
-        return;
+        return 0;
     }
 
     std::string nick = args[index++];
     Client* target = find_client_by_nick(nick);
     if (!target || !chan->is_client_in_channel(target))
     {
+        std::cout << "line 69\n";
         replyCode = 441;
         std::string msg = reply(client->get_client_nickname(), nick + " :They aren't on that channel");
         send_to_client(client->get_client_fd(), msg);
-        return;
+        return 0;
     }
 
     if (add)
@@ -81,8 +84,9 @@ void Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::strin
         replyCode = 482;
         std::string msg = reply(client->get_client_nickname(), nick + " :is not a channel operator");
         send_to_client(client->get_client_fd(), msg);
-        return;
+        return 0;
     }
+    return 1;
 }
 
 void Server::notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args)
@@ -111,6 +115,7 @@ void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector
     bool add = true;
     int index = 3;
     size_t i = 0;
+    int rtrn = 1;
 
     while (i < flag_str.length())
     {
@@ -133,11 +138,11 @@ void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector
         else if (flag == 't')
             handle_mode_t(chan, add);
         else if (flag == 'k')
-            handle_mode_k(client, chan, args, add, index);
+            rtrn = handle_mode_k(client, chan, args, add, index);
         else if (flag == 'l')
-            handle_mode_l(client, chan, args, add, index);
+            rtrn = handle_mode_l(client, chan, args, add, index);
         else if (flag == 'o')
-            handle_mode_o(client, chan, args, add, index);
+            rtrn = handle_mode_o(client, chan, args, add, index);
         else
         {
             replyCode = 472;
@@ -150,7 +155,8 @@ void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector
         }
         ++i;
     }
-    notify_channel_mode_change(client, chan, args);
+    if (rtrn == 1)
+        notify_channel_mode_change(client, chan, args);
 }
 
 

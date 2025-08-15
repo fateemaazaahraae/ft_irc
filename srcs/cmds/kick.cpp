@@ -62,6 +62,10 @@ void Server::handle_kick(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), channelName + " :User is not on that channel"));
         return;
     }
+    if (targetClient->get_invitedChannels(channel))
+    {
+        targetClient->removeInvitedChannel(channelName);
+    }
     std::string kickMsg = ":" + client->get_prefix() + " KICK " + channelName + " " + targetClient->get_client_nickname() + " :" + reason + "\r\n";
     broadcastMessage(channel, kickMsg);
     channel->removeClient(targetClient->get_client_fd());

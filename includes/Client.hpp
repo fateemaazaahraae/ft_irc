@@ -39,6 +39,7 @@ class Client
         bool get_client_operator();
         bool get_invitedChannels(Channel *channel) const;
         std::string get_prefix() const;
+        void removeInvitedChannel(std::string &channel);
 
         
         //======================= setters =======================
