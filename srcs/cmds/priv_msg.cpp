@@ -2,16 +2,54 @@
 
 void Server::bot_check_message(Channel* chan, const std::string& msg)
 {
-    std::cout <<"hiii";
-    if (msg == "!dakir")
+    std::cout << "hiii";
+
+    std::string reply;
+
+    if (msg == "!happy")
     {
-        std::string reply = ":" + bot->get_client_nickname() +
-                            "!" + bot->get_client_username() +
-                            "@server PRIVMSG " + chan->get_name() +
-                            " :الحمد لله\r\n";
-        broadcastMessage(chan, reply);
+        reply = ":" + bot->get_client_nickname() +
+                "!" + bot->get_client_username() +
+                "@server PRIVMSG " + chan->get_name() +
+                " 🤲 الحمد لله\r\n";
     }
+    else if (msg == "!sad")
+    {
+        reply = ":" + bot->get_client_nickname() +
+                "!" + bot->get_client_username() +
+                "@server PRIVMSG " + chan->get_name() +
+                "{ قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ } \r\n";
+    }
+    else if (msg == "!time")
+    {
+        time_t now = time(0);
+        char buffer[80];
+        strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&now));
+
+        reply = ":" + bot->get_client_nickname() +
+                "!" + bot->get_client_username() +
+                "@server PRIVMSG " + chan->get_name() +
+                " ⏰ Current server time is: " + buffer + "\r\n";
+    }
+    else if (msg == "!help")
+    {
+        reply = ":" + bot->get_client_nickname() +
+                "!" + bot->get_client_username() +
+                "@server PRIVMSG " + chan->get_name() +
+                " 📜 Commands: !happy, !sad, !time, !joke, !help\r\n";
+    }
+    else if (msg == "!joke")
+    {
+        reply = ":" + bot->get_client_nickname() +
+                "!" + bot->get_client_username() +
+                "@server PRIVMSG " + chan->get_name() +
+                " 😄 Why don’t programmers like nature? Too many bugs!\r\n";
+    }
+
+    if (!reply.empty())
+        broadcastMessage(chan, reply);
 }
+
 
 
 void Server::sending_msg_in_chan(Client* client, std::string message, std::string target)
