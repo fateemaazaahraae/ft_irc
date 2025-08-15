@@ -1,5 +1,19 @@
 # include "../../includes/Server.hpp"
 
+void Server::bot_check_message(Channel* chan, const std::string& msg)
+{
+    std::cout <<"hiii";
+    if (msg == "!dakir")
+    {
+        std::string reply = ":" + bot->get_client_nickname() +
+                            "!" + bot->get_client_username() +
+                            "@server PRIVMSG " + chan->get_name() +
+                            " :الحمد لله\r\n";
+        broadcastMessage(chan, reply);
+    }
+}
+
+
 void Server::sending_msg_in_chan(Client* client, std::string message, std::string target)
 {
     Channel* chan = findChannel(target);
@@ -21,6 +35,8 @@ void Server::sending_msg_in_chan(Client* client, std::string message, std::strin
             send_to_client(members[i]->get_client_fd(), fullMsg);
         i++;
     }
+    std::cout << "line 38\n";
+    bot_check_message(chan, message);
 }
 
 void Server::sending_msg_to_user(Client* client, std::string message, std::string target)

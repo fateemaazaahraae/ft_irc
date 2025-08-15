@@ -46,6 +46,7 @@ class Server
         std::vector<Client*> myClients;//free
         struct sockaddr_in serverAddr;
         std::vector<Channel*> my_channels;//free
+        Client *bot;
 
     public :
         Server();
@@ -98,5 +99,7 @@ class Server
         void apply_channel_mode_flags(Client* client, Channel* chan, std::vector<std::string>& args);
         void notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args);
         Client* find_client_by_nick(std::string nick);
-
+        void init_bot();
+        void bot_join_channel(Channel* chan);
+        void bot_check_message(Channel* chan, const std::string& msg);
 };

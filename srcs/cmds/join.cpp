@@ -2,6 +2,8 @@
 
 void Server::send_to_client(int clientFd, const std::string& message) 
 {
+    if (clientFd == -1)
+        return;
     std::string msg = message;
     if (msg.substr(msg.size() - 2) != "\r\n")
         msg += "\r\n";
@@ -44,6 +46,7 @@ void Server::handle_join(Client* client, std::vector<std::string>& args)
     if (chan == NULL)
     {
         Channel* new_channel = new Channel(name);
+        bot_join_channel(new_channel);
         new_channel->add_client(client, this);
         new_channel->add_operator(client->get_client_fd());
         my_channels.push_back(new_channel);

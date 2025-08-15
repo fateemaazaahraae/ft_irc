@@ -9,7 +9,18 @@ Server::Server()
     pass = "";
     serverName = "ft_irc_server.com";
     replyCode = 0;
+    init_bot();
 }
+
+void Server::init_bot()
+{
+    bot = new Client(); 
+    bot->set_client_nickname("bot");
+    bot->set_client_username("bot");
+    bot->set_client_realname("internal bot");
+    myClients.push_back(bot);
+}
+
 
 void Server::initServer(std::string port, std::string pass)
 {

@@ -120,3 +120,13 @@ void Server::broadcastMessage(Channel* channel, std::string& message)
     for (size_t i = 0; i < channel->get_clients().size(); i++)
         send_to_client(channel->get_clients()[i]->get_client_fd(), message);
 }
+
+void Server::bot_join_channel(Channel* chan)
+{
+    if (!chan->is_client_in_channel(bot))
+    {
+        chan->add_client(bot, this);
+        std::string join_msg = ":" + bot->get_prefix() +"@server JOIN " + chan->get_name() + "\r\n";
+        broadcastMessage(chan, join_msg);
+    }
+}

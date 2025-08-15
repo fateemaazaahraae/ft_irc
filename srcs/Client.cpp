@@ -13,6 +13,8 @@ Client::Client()
     // is_operator = false;
 }
 
+
+
 Client::Client(const Client& other)
 {
     fd = other.fd;
@@ -53,12 +55,12 @@ std::string Client::get_prefix() const
 
 //======================= setters =======================
 
-void Client::set_client_realname(std::string& realname)
+void Client::set_client_realname(const std::string& realname)
 {
     this->realname = realname;
 }
 
-void Client::set_client_username(std::string& username)
+void Client::set_client_username(const std::string& username)
 {
     this->username = username;
 }
@@ -90,7 +92,7 @@ void Client::set_client_registered()
     is_registered = !is_registered;
 }
 
-void Client::set_client_nickname(std::string& nickname)
+void Client::set_client_nickname(const std::string& nickname)
 {
     this->nickname = nickname;
 }
@@ -104,5 +106,6 @@ bool Client::get_invitedChannels(Channel *channel) const
 {
     return std::find(invitedChannels.begin(), invitedChannels.end(), channel->get_name()) != invitedChannels.end();
 }
+
 
 Client::~Client() {}
