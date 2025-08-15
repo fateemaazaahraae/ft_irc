@@ -36,7 +36,7 @@ void Server::bot_check_message(Channel* chan, const std::string& msg)
         reply = ":" + bot->get_client_nickname() +
                 "!" + bot->get_client_username() +
                 "@server PRIVMSG " + chan->get_name() +
-                " 📜 Commands: !happy, !sad, !time, !joke, !help\r\n";
+                " 📜 Commands: !happy, !sad, !time, !joke, !help, !lonely, !angry\r\n";
     }
     else if (msg == "!joke")
     {
@@ -44,6 +44,20 @@ void Server::bot_check_message(Channel* chan, const std::string& msg)
                 "!" + bot->get_client_username() +
                 "@server PRIVMSG " + chan->get_name() +
                 " 😄 Why don’t programmers like nature? Too many bugs!\r\n";
+    }
+    else if (msg == "!angry")
+    {
+        reply = ":" + bot->get_client_nickname() +
+                "!" + bot->get_client_username() +
+                "@server PRIVMSG " + chan->get_name() +
+                " { وَالْكَاظِمِينَ الْغَيْظَ وَالْعَافِينَ عَنِ النَّاسِ ۗ وَاللَّهُ يُحِبُّ الْمُحْسِنِينَ } 🤲\r\n";
+    }
+    else if (msg == "!lonely")
+    {
+        reply = ":" + bot->get_client_nickname() +
+                "!" + bot->get_client_username() +
+                "@server PRIVMSG " + chan->get_name() +
+                " { وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ ۚ وَاللَّهُ بِمَا تَعْمَلُونَ بَصِيرٌ } 🤍\r\n";
     }
 
     if (!reply.empty())
