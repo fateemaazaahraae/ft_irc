@@ -1,13 +1,15 @@
 # include "../../includes/Server.hpp"
 
-void Server::handle_mode_i(Channel* chan, bool add)
+int Server::handle_mode_i(Channel* chan, bool add)
 {
-        chan->set_invite_only(add);   
+        chan->set_invite_only(add); 
+        return 1;  
 }
 
-void Server::handle_mode_t(Channel* chan, bool add)
+int Server::handle_mode_t(Channel* chan, bool add)
 {
         chan->set_topic_restricted(add);
+        return 1;
 }
 
 int Server::handle_mode_k(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int &index)
@@ -89,24 +91,22 @@ int Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::string
     return 1;
 }
 
-void Server::notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args)
+void Server::notify_channel_mode_change(Client* client, Channel* chan, const std::string& success_modes, const std::vector<std::string>& success_params)
 {
-    std::string param = "";
-    size_t i = 3;
-    while( i < args.size())
+    std::string notif = ":" + client->get_prefix() + " MODE " + chan->get_name() + " " + success_modes;
+    for (size_t j = 0; j < success_params.size(); ++j)
     {
-        param += " " + args[i];
-        i++;
+        notif += " " + success_params[j];
     }
-    std::string notif = ":" + client->get_prefix() + " MODE " + chan->get_name() + " " + args[2] + param + "\r\n";
+    notif += "\r\n";
+
     std::vector<Client *> mem = chan->get_clients();
-    i = 0;
-    while(i  < mem.size())
+    for (size_t j = 0; j < mem.size(); ++j)
     {
-        send_to_client(mem[i]->get_client_fd(), notif);
-        i++;
+        send_to_client(mem[j]->get_client_fd(), notif);
     }
 }
+
 
 
 void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector<std::string>& args)
@@ -115,34 +115,49 @@ void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector
     bool add = true;
     int index = 3;
     size_t i = 0;
-    int rtrn = 1;
+
+    std::string success_modes;
+    std::vector<std::string> success_params; 
 
     while (i < flag_str.length())
     {
         char flag = flag_str[i];
         if (flag == '+') 
-        {
-            add = true;
-            i++;
-            continue;
+        { 
+            add = true; 
+            success_modes += "+"; i++; continue; 
         }
         if (flag == '-') 
-        {
-            add = false;
-            i++;
-            continue;
+        { 
+            add = false; 
+            success_modes += "-"; 
+            i++; 
+            continue; 
         }
 
-        if (flag == 'i')
-            handle_mode_i(chan, add);
-        else if (flag == 't')
-            handle_mode_t(chan, add);
-        else if (flag == 'k')
-            rtrn = handle_mode_k(client, chan, args, add, index);
-        else if (flag == 'l')
-            rtrn = handle_mode_l(client, chan, args, add, index);
-        else if (flag == 'o')
-            rtrn = handle_mode_o(client, chan, args, add, index);
+        int success = 0;
+
+        if (flag == 'i') 
+            success = handle_mode_i(chan, add);
+        else if (flag == 't')  
+            success = handle_mode_t(chan, add);
+        else if (flag == 'k') 
+        {
+            if ((success = handle_mode_k(client, chan, args, add, index)))
+                if (add) 
+                        success_params.push_back(args[index - 1]);
+        }
+        else if (flag == 'l') 
+        {
+            if ((success = handle_mode_l(client, chan, args, add, index)))
+                if (add) 
+                        success_params.push_back(args[index - 1]);
+        }
+        else if (flag == 'o') 
+        {
+            if ((success = handle_mode_o(client, chan, args, add, index)))
+                success_params.push_back(args[index - 1]);
+        }
         else
         {
             replyCode = 472;
@@ -153,11 +168,19 @@ void Server::apply_channel_mode_flags(Client* client, Channel* chan, std::vector
             send_to_client(client->get_client_fd(), oss.str());
             return;
         }
+
+        if (success)
+            success_modes += flag;
+        else if (!success)
+            success_modes.erase(success_modes.size() - 1, success_modes.size());
+
         ++i;
     }
-    if (rtrn == 1)
-        notify_channel_mode_change(client, chan, args);
+
+    if (!success_modes.empty())
+        notify_channel_mode_change(client, chan, success_modes, success_params);
 }
+
 
 
 void Server::handle_mode(Client* client, std::vector<std::string>& args)

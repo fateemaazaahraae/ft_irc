@@ -91,13 +91,14 @@ class Server
         void setReplyCode(int code);
         void broadcastMessage(Channel* channel, std::string& message);
 
-        void handle_mode_i(Channel* chan, bool add);
-        void handle_mode_t(Channel* chan, bool add);
+        int handle_mode_t(Channel* chan, bool add);
+        int handle_mode_i(Channel* chan, bool add);
         int handle_mode_k(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
         int handle_mode_l(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
         int handle_mode_o(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
         void apply_channel_mode_flags(Client* client, Channel* chan, std::vector<std::string>& args);
-        void notify_channel_mode_change(Client* client, Channel* chan, const std::vector<std::string>& args);
+        // in Server.hpp
+        void notify_channel_mode_change(Client* client, Channel* chan, const std::string& success_modes, const std::vector<std::string>& success_params);
         Client* find_client_by_nick(std::string nick);
         void init_bot();
         void bot_join_channel(Channel* chan);
