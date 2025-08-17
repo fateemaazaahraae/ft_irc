@@ -31,7 +31,7 @@ void Server::handle_part(Client* client, std::vector<std::string>& args)
         send_to_client(client->get_client_fd(), rep);
         return;
     }
-    std::string partMsg = args.size() > 2 ? args[2].trim(args[2].substr(1)) : "";
+    std::string partMsg = args.size() > 2 ? trim(args[2].substr(1)) : "";
 
     std::string broadcastMsg = ":" + client->get_prefix() + " PART " + channelName;
     if (!partMsg.empty())

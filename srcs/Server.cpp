@@ -201,17 +201,6 @@ void Server::executeClientCommand(Client* client, const std::string& cmd)
     executeCommand(client, arg);
 }
 
-// void handle_wadakir(Client *c, std::vector<std::string> &args)
-// {
-//     std::string cmd = args[1];
-    
-//     if (cmd == "happy")
-//         handle_happy(c, args);
-//     else if (cmd == "sad")
-//         handle_sad(c, args);
-// }
-
-
 void Server::executeCommand(Client *client, std::vector<std::string> &args)
 {
     if (args.empty())
@@ -235,14 +224,15 @@ void Server::executeCommand(Client *client, std::vector<std::string> &args)
         handle_invite(client, args);
     else if (args[0] == "MODE")
         handle_mode(client, args);
+    else if (args[0] == "PART")
+        handle_part(client, args);
+    else if (args[0] == "NAMES")
+        handle_names(client, args);
     else if (args[0] == "CAP" || args[0] == "PING"
 			|| args[0] == "PONG" || args[0] == "WHO" || args[0] == "QUIT")
-		return ; 
-    // else if (args[0] == "WADAKIRBOT")
-    //     handle_wadakir_input(client, args);
+		return ;
     else
         send_to_client(client->get_client_fd(), "Unknown command\n");
-    // std::cout << " الحمد لله" << std::endl;
 }
 
 
