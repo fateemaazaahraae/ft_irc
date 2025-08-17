@@ -74,6 +74,8 @@ class Server
         void send_to_client(int clientFd, const std::string& message);
         void handle_join(Client* client, std::vector<std::string>& args);
         void handle_part(Client* client, std::vector<std::string>& args);
+        void handle_names(Client* client, std::vector<std::string>& args);
+        void send_names_for_channel(Client* client, Channel* chan);
         Channel* findChannel(const std::string& name);
         std::string reply(std::string target, const std::string& message);
         void welcomeClient(Client* client);
