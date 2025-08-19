@@ -110,7 +110,7 @@ void Server::receiveNewData(int clientFd)
     else
     {
         buffer[readBytes] = '\0';
-         for (size_t i = 0; i < myClients.size(); ++i)
+        for (size_t i = 0; i < myClients.size(); ++i)
         {
             if (myClients[i]->get_client_fd() == clientFd)
             {
