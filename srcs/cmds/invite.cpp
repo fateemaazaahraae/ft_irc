@@ -56,7 +56,6 @@ void Server::handle_invite(Client* client, std::vector<std::string>& args)
     }
     targetClient->set_invitedChannels(channelName);
     replyCode = 341;
-    // send_to_client(client->get_client_fd(), reply(client->get_client_nickname(), targetNick + " " + channelName));
     std::string inviteMsg = ":" + client->get_prefix() + " INVITE " + targetNick + " :" + channelName + "\r\n";
     send_to_client(targetClient->get_client_fd(), inviteMsg);
 }

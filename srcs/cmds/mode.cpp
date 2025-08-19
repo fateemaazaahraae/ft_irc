@@ -70,7 +70,6 @@ int Server::handle_mode_o(Client* client, Channel* chan, std::vector<std::string
     Client* target = find_client_by_nick(nick);
     if (!target || !chan->is_client_in_channel(target))
     {
-        std::cout << "line 69\n";
         replyCode = 441;
         std::string msg = reply(client->get_client_nickname(), nick + " :They aren't on that channel");
         send_to_client(client->get_client_fd(), msg);

@@ -117,10 +117,10 @@ void Server::receiveNewData(int clientFd)
                 std::string &buf = myClients[i]->get_client_buffer();
                 buf += buffer;
                 size_t pos;
-                while ((pos = buf.find("\n")) != std::string::npos)
+                while ((pos = buf.find("\r\n")) != std::string::npos)
                 {
                     std::string cmd = buf.substr(0, pos);
-                    buf.erase(0, pos + 1);
+                    buf.erase(0, pos + 2);
                     std::cout << "Received command: " << cmd << std::endl;
                     executeClientCommand(myClients[i], cmd);
                 }

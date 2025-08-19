@@ -82,7 +82,6 @@ void Server::sending_msg_in_chan(Client* client, std::string message, std::strin
             send_to_client(members[i]->get_client_fd(), fullMsg);
         i++;
     }
-    std::cout << "line 38\n";
     bot_check_message(chan, message);
 }
 
