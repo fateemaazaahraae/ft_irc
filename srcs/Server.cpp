@@ -87,7 +87,8 @@ void Server::removeClient(int clientFd)
     {
         if ((*it)->get_client_fd() == clientFd)
         {
-            close((*it)->get_client_fd());
+            if ((*it)->get_client_fd() != -1)
+                close((*it)->get_client_fd());
             delete *it;
             it = myClients.erase(it);
         }
@@ -243,7 +244,8 @@ void Server::clean_up()
     {
         if (myClients[i])
         {
-            close(myClients[i]->get_client_fd());
+            if (myClients[i]->get_client_fd() != -1)
+                close(myClients[i]->get_client_fd());
             delete myClients[i];
             myClients[i] = NULL;
         }
@@ -261,7 +263,8 @@ void Server::clean_up()
         i++;
     }
     my_channels.clear();
-    close(fd);
+    if (fd != -1)
+        close(fd);
 }
 
 void Server::setReplyCode(int code){
@@ -269,7 +272,3 @@ void Server::setReplyCode(int code){
 }
 
 Server::~Server(){}
-
-//TODO   ## client command ##
-//TODO ---->   (ouiam) 1. JOIN & PRIVMSG 
-//TODO ---->   (tiima) 2. PASS & NICK & USER

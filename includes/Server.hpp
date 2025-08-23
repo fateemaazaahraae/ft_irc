@@ -42,10 +42,10 @@ class Server
         int replyCode;
         std::string pass;
         std::string serverName;
-        std::vector<struct pollfd> poll_fd;//close fds
-        std::vector<Client*> myClients;//free
+        std::vector<struct pollfd> poll_fd;
+        std::vector<Client*> myClients;
         struct sockaddr_in serverAddr;
-        std::vector<Channel*> my_channels;//free
+        std::vector<Channel*> my_channels;
         Client *bot;
 
     public :
@@ -100,7 +100,6 @@ class Server
         int handle_mode_l(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
         int handle_mode_o(Client* client, Channel* chan, std::vector<std::string>& args, bool add, int& index);
         void apply_channel_mode_flags(Client* client, Channel* chan, std::vector<std::string>& args);
-        // in Server.hpp
         void notify_channel_mode_change(Client* client, Channel* chan, const std::string& success_modes, const std::vector<std::string>& success_params);
         Client* find_client_by_nick(std::string nick);
         void init_bot();

@@ -10,7 +10,6 @@ Client::Client()
     hostname = "127.0.0.1";
     is_authorized = false;
     is_registered = false;
-    // is_operator = false;
 }
 
 
